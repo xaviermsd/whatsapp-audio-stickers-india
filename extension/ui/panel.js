@@ -93,6 +93,7 @@
     launcher = buildHandle();
     panel = h("div", { class: "panel", role: "dialog", "aria-label": t("title"), hidden: true });
     wrap.append(launcher, panel);
+    setupPanelDrop();
     document.documentElement.append(host);
     applyTheme();
     new MutationObserver(applyTheme).observe(document.body || document.documentElement, { attributes: true, attributeFilter: ["class"] });
@@ -331,12 +332,7 @@
           drop.dataset.over = "true";
         },
         ondragleave: () => (drop.dataset.over = "false"),
-        ondrop: (e) => {
-          e.preventDefault();
-          drop.dataset.over = "false";
-          const f = e.dataTransfer.files[0];
-          f && pick(f);
-        },
+        ondrop: () => (drop.dataset.over = "false"), // the panel-wide drop handler takes the file
       },
       h("span", { class: "bubble" }, icon("upload")),
       h("strong", { text: job.state === "loading" ? J.LABELS.loading[WASI.i18n.lang] || J.LABELS.loading.en : t("drop") }),
@@ -446,7 +442,7 @@
       {},
       stepTitle(1, "step1"),
       pv,
-      h("div", { class: "row" }, h("span", { class: "filename", style: "flex:1", text: s.file ? s.file.name : "" }), btn(t("chooseFile"), "upload", resetToPick, "btn small")),
+      h("div", { class: "row clip-row" }, h("span", { class: "filename", style: "flex:1", text: s.file ? s.file.name : "" }), changePicker(), btn(t("changeClip"), "upload", () => mainEl.querySelector(".change-picker").click(), "btn small"), btn(t("removeClip"), "trash", () => startOver(), "btn small danger")),
       extra
     );
   }
@@ -817,10 +813,23 @@
     if (job.state === "building") {
       const bar = h("div", {}, h("div", { style: `width:${Math.round(job.progress * 100)}%` }));
       bar.className = "progress";
+      const art = h(
+        "div",
+        { class: "buildart", "aria-hidden": "true" },
+        h("div", { class: "buildart-ring" }),
+        logoUrl ? h("img", { class: "buildart-logo", src: logoUrl, alt: "", draggable: "false" }) : h("div", { class: "buildart-logo" }, icon("sound")),
+        h("div", { class: "buildart-waves" }, h("i"), h("i"), h("i"), h("i"), h("i"))
+      );
       sec.append(
-        h("p", { class: "length", text: J.LABELS.building[WASI.i18n.lang] || J.LABELS.building.en }),
-        bar,
-        h("div", { class: "row", style: "margin-top:10px" }, btn(t("cancel"), "close", cancelBuild))
+        h(
+          "div",
+          { class: "buildbox", role: "status", "aria-live": "polite" },
+          art,
+          h("div", { class: "buildpct", text: Math.round(job.progress * 100) + "%" }),
+          h("p", { class: "buildstage", text: stageText(job.progress) }),
+          bar,
+          h("div", { class: "row", style: "justify-content:center;margin-top:12px" }, btn(t("cancel"), "close", cancelBuild, "btn small"))
+        )
       );
       return sec;
     }
@@ -842,7 +851,8 @@
         h("div", { class: "row" },
           btn(t("sendMe"), "user", () => sendBuilt("me"), "btn small"),
           btn(built.savedId ? t("saved") : t("save"), "save", saveBuilt, "btn small"),
-          btn(t("download"), "download", () => download(built), "btn small"))
+          btn(t("download"), "download", () => download(built), "btn small")),
+        h("div", { class: "row another-row" }, btn(t("makeAnother"), "refresh", () => startOver(), "btn small ghost"))
       );
       if (job.state === "sending") sec.querySelectorAll("button").forEach((b) => (b.disabled = true));
       return sec;
@@ -859,6 +869,79 @@
   function refreshBuild() {
     const sec = mainEl && mainEl.querySelector("[data-build]");
     if (sec) sec.replaceWith(buildSection());
+  }
+
+  // ---------- start over, change the clip ----------
+  // Which part of the work is running, from the progress the build reports (sound 0-10%, frames 10-55%, file 55-100%).
+  function stageText(p) {
+    return p < 0.1 ? t("stageSound") : p < 0.55 ? t("stageFrames") : t("stagePack");
+  }
+
+  // A sticker that was made but neither sent nor saved would be lost: ask first.
+  function startOver() {
+    const unsent = built && !built.savedId && job.state !== "sent";
+    if (unsent && !root.confirm(t("confirmDiscard"))) return;
+    resetToPick();
+  }
+
+  // A hidden file input that swaps the clip straight away (no trip back to the empty screen).
+  function changePicker() {
+    const input = h("input", { type: "file", class: "change-picker", accept: "video/*,image/*,audio/*,.gif,.webp,.mp3,.m4a,.ogg,.opus,.wav", hidden: true });
+    input.addEventListener("change", () => {
+      const f = input.files[0];
+      if (!f) return;
+      const unsent = built && !built.savedId && job.state !== "sent";
+      if (unsent && !root.confirm(t("confirmDiscard"))) return;
+      cancelBuild();
+      pick(f);
+    });
+    return input;
+  }
+
+  // Drag a file anywhere over the panel: a lime cover with a bouncing icon, drop to use it (replaces the clip).
+  function setupPanelDrop() {
+    let depth = 0;
+    const cover = h(
+      "div",
+      { class: "dropcover", "aria-hidden": "true" },
+      h("div", { class: "dropcover-card" }, h("span", { class: "dropcover-icon" }, icon("upload")), h("strong", { text: t("dropHere") }), h("span", { text: t("dropKinds") }))
+    );
+    panel.parentElement.append(cover);
+    const hasFiles = (e) => e.dataTransfer && [...e.dataTransfer.types].includes("Files");
+    const show = (on) => {
+      cover.classList.toggle("on", on);
+      host.dataset.wasiDrag = String(on);
+    };
+    panel.addEventListener("dragenter", (e) => {
+      if (!hasFiles(e)) return;
+      e.preventDefault();
+      depth++;
+      show(true);
+    });
+    panel.addEventListener("dragover", (e) => {
+      if (!hasFiles(e)) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "copy";
+    });
+    panel.addEventListener("dragleave", (e) => {
+      if (!hasFiles(e)) return;
+      depth = Math.max(0, depth - 1);
+      if (!depth) show(false);
+    });
+    panel.addEventListener("drop", (e) => {
+      if (!hasFiles(e)) return;
+      e.preventDefault();
+      e.stopPropagation();
+      depth = 0;
+      show(false);
+      const f = e.dataTransfer.files[0];
+      if (!f) return;
+      const unsent = built && !built.savedId && job.state !== "sent";
+      if (unsent && !root.confirm(t("confirmDiscard"))) return;
+      cancelBuild();
+      tab = "make";
+      pick(f);
+    });
   }
 
   // ---------- loading a clip ----------
@@ -1001,6 +1084,10 @@
       if (dispatch({ type: "progress", run, value: base + p * span })) {
         const bar = mainEl && mainEl.querySelector(".progress > div");
         if (bar) bar.style.width = `${Math.round(job.progress * 100)}%`;
+        const pct = mainEl && mainEl.querySelector(".buildpct");
+        if (pct) pct.textContent = Math.round(job.progress * 100) + "%";
+        const st = mainEl && mainEl.querySelector(".buildstage");
+        if (st) st.textContent = stageText(job.progress);
       }
     };
     let frames = [];

@@ -259,6 +259,56 @@ footer a { color: var(--text); font-weight: 800; text-decoration: underline; tex
 .recdot { width: 12px; height: 12px; border-radius: 50%; background: var(--danger); animation: pulse 1s ease-in-out infinite; }
 .rectime { font-size: 28px; font-weight: 800; font-variant-numeric: tabular-nums; }
 @keyframes pulse { 50% { opacity: 0.3; } }
+/* Clip row: Change and Remove */
+.clip-row .btn.danger { color: var(--danger); }
+.clip-row .btn.danger:hover:not([disabled]) { border-color: var(--danger); background: var(--danger-soft); }
+.another-row { justify-content: center; margin-top: 6px; }
+.btn.ghost { border-style: dashed; }
+
+/* Drop cover: drag a file anywhere over the panel */
+.dropcover {
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 2147483003; width: min(424px, 100vw);
+  display: grid; place-items: center; padding: 22px; pointer-events: none; opacity: 0;
+  background: color-mix(in srgb, var(--bg) 70%, transparent); backdrop-filter: blur(3px);
+  transition: opacity 160ms var(--ease);
+}
+.dropcover.on { opacity: 1; }
+.dropcover-card {
+  display: grid; justify-items: center; gap: 8px; width: 100%; height: 100%; place-content: center; text-align: center;
+  border: 3px dashed var(--ink-fixed); border-radius: 24px; background: var(--soft-lime);
+  transform: scale(.96); transition: transform 220ms var(--ease);
+}
+.wasi[data-theme="dark"] .dropcover-card { border-color: var(--lime); }
+.dropcover.on .dropcover-card { transform: scale(1); }
+.dropcover-card strong { font-size: 26px; font-weight: 800; color: var(--text); }
+.dropcover-card span:last-child { color: var(--muted); font-weight: 600; }
+.dropcover-icon {
+  display: grid; place-items: center; width: 76px; height: 76px; border: 2.5px solid var(--ink-fixed); border-radius: 22px;
+  background: var(--lime); color: var(--ink-fixed); box-shadow: 4px 4px 0 0 var(--ink-fixed);
+}
+.dropcover-icon svg { width: 36px; height: 36px; stroke-width: 2.2; }
+.dropcover.on .dropcover-icon { animation: wasi-bob 900ms var(--ease) infinite alternate; }
+@keyframes wasi-bob { from { transform: translateY(4px); } to { transform: translateY(-8px); } }
+
+/* Making your sticker */
+.buildbox { display: grid; justify-items: center; gap: 6px; padding: 22px 18px 16px; border: 2px solid var(--brut-border); border-radius: 22px; background: var(--surface); }
+.buildbox .progress { width: 100%; }
+.buildart { position: relative; display: grid; place-items: center; width: 132px; height: 132px; margin-bottom: 4px; }
+.buildart-ring { position: absolute; inset: 0; border-radius: 50%; border: 3px dashed var(--line-strong); animation: wasi-spin 6s linear infinite; }
+.buildart-logo { width: 84px; height: 84px; display: grid; place-items: center; animation: wasi-wiggle 1.1s var(--ease) infinite; filter: drop-shadow(3px 3px 0 rgb(8 8 8 / .25)); }
+.buildart-logo svg { width: 48px; height: 48px; }
+.buildart-waves { position: absolute; bottom: -2px; display: flex; gap: 4px; align-items: center; height: 22px; padding: 3px 9px; border: 2px solid var(--ink-fixed); border-radius: 999px; background: var(--lime); }
+.buildart-waves i { width: 4px; height: 100%; border-radius: 3px; background: var(--ink-fixed); animation: wasi-wave 700ms ease-in-out infinite; }
+.buildart-waves i:nth-child(2) { animation-delay: -150ms; }
+.buildart-waves i:nth-child(3) { animation-delay: -330ms; }
+.buildart-waves i:nth-child(4) { animation-delay: -480ms; }
+.buildart-waves i:nth-child(5) { animation-delay: -600ms; }
+@keyframes wasi-spin { to { transform: rotate(360deg); } }
+@keyframes wasi-wiggle { 0%, 100% { transform: rotate(-6deg) scale(1); } 50% { transform: rotate(6deg) scale(1.06); } }
+.buildpct { font-size: 34px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+.buildstage { margin: 0 0 6px; color: var(--muted); font-weight: 700; }
+
+@media (prefers-reduced-motion: reduce) { .buildart-ring, .buildart-logo, .buildart-waves i, .dropcover.on .dropcover-icon { animation: none !important; } }
 @media (prefers-reduced-motion: reduce) { .handle-waves i { animation: none !important; } .handle-chev svg, .panel, .handle, .progress > div, .btn { transition: none; } .recdot { animation: none; } }
 `;
 })(typeof globalThis !== "undefined" ? globalThis : this);

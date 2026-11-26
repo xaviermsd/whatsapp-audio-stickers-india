@@ -33,13 +33,11 @@ export const click = (page, text) =>
 export async function loadClip(page, clip, { typeCaption } = {}) {
   await page.evaluate(async ([q, c]) => {
     const r = eval(q);
-    const choose = [...r.querySelectorAll("button")].find((b) => b.textContent.includes("Choose file"));
-    if (choose) choose.click();
-    await new Promise((ok) => setTimeout(ok, 300));
+    // a loaded clip is swapped through the Change picker; the empty screen uses the drop box input
     const blob = await (await fetch("../clips-input/" + c.file)).blob();
     const name = c.file;
     const file = new File([blob], name, { type: "video/mp4" });
-    const input = r.querySelector("input[type=file]");
+    const input = r.querySelector("input.change-picker") || r.querySelector("input[type=file]");
     const dt = new DataTransfer();
     dt.items.add(file);
     input.files = dt.files;
