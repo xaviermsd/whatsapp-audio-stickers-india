@@ -1,0 +1,10 @@
+node_modules/
+*.zip
+dist/
+.DS_Store
+Thumbs.db
+.impeccable/config.local.json
+clips-input/
+.claude/
+dev/out/
+private/

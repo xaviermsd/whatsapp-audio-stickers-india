@@ -1,0 +1,34 @@
+# WA Audio Stickers India
+
+> Free, open-source (MIT) Chrome extension by Worklancio (India) that makes WhatsApp audio stickers, also called
+> stickers with sound or sound stickers, from any video, GIF, photo or voice recording, and sends them from
+> WhatsApp Web. Works in Chrome, Edge and Brave. Runs fully on the user's computer: no server, no sign-up, no
+> tracking. Unofficial; not made by or affiliated with WhatsApp or Meta.
+
+## Key facts
+- Version 1.0.0, updated 2026-11-27. Price: free.
+- Inputs: MP4, WebM, MOV, GIF, PNG, JPG, MP3, M4A, WAV, OGG; or record voice or webcam in the panel.
+- Features: cut up to 15 seconds, speed 0.5x to 2x, boomerang, volume, auto level, fades, captions in Hindi,
+  English or Hinglish, saved sticker library with pack export and import, app in Hindi and English.
+- Output: animated WebP sticker plus Ogg Opus sound, each under WhatsApp's 1 MB limits.
+- Permissions: storage and web.whatsapp.com only. Sends one sticker at a time, only when the user clicks.
+- Made by Worklancio (https://www.worklancio.in), a web development company in India. Built by Harsh Prajapati.
+
+## Links
+- [Home](https://xaviermsd.github.io/whatsapp-audio-stickers-india/): what it is, install, FAQ
+- [How to send audio stickers on WhatsApp](https://xaviermsd.github.io/whatsapp-audio-stickers-india/how-to-send-audio-stickers-on-whatsapp.html): step-by-step guide
+- [Hindi page](https://xaviermsd.github.io/whatsapp-audio-stickers-india/hi/)
+- [GitHub repository](https://github.com/xaviermsd/whatsapp-audio-stickers-india): code, README, security
+- [Download latest release](https://github.com/xaviermsd/whatsapp-audio-stickers-india/releases/latest)
+- [Security and privacy](https://github.com/xaviermsd/whatsapp-audio-stickers-india/blob/main/SECURITY.md)
+- [Worklancio services](https://www.worklancio.in/services)
+
+## FAQ
+- **What are WhatsApp audio stickers?** WhatsApp audio stickers (also called sound stickers) are animated stickers that play a short sound when you tap them. WA Audio Stickers India lets you make them from any video, GIF, photo or your own voice and send them from WhatsApp Web.
+- **How do I send a sticker with sound on WhatsApp?** Install the free WA Audio Stickers India extension in Chrome, Edge or Brave, open web.whatsapp.com, click the lime tab, pick or record a clip, press Make sticker, then Send to this chat. Your friend taps the sticker and hears the sound.
+- **Is WA Audio Stickers India free?** Yes. It is completely free and open source under the MIT licence, with no sign-up, no ads and no paid version.
+- **Is it safe and private?** Yes. Everything is made on your own computer. The extension only asks for storage and web.whatsapp.com, has no server and no tracking, and sends only when you click, one sticker at a time.
+- **Can I make audio stickers in Hindi?** Yes. You can add captions in Hindi, English or Hinglish, and the whole app can switch to Hindi with one tap.
+- **Will my friend hear the sound?** Yes, if their WhatsApp is up to date. The sound plays on Android, iPhone and WhatsApp Web when they tap the sticker.
+- **Does it work on my phone?** It runs on a computer, in WhatsApp Web. Use Send to myself, then forward or star the sticker from your phone to keep it in your sticker tray.
+- **Is this an official WhatsApp tool?** No. It is an unofficial, open-source tool made by Worklancio in India. It is not made by, linked to or approved by WhatsApp or Meta.

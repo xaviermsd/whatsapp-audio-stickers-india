@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Audio Stickers dev harness</title>
+<!-- A made-up, unbranded chat app to test and screenshot the panel. Not WhatsApp: no WhatsApp logo, name or colours. -->
+<style>
+  @font-face { font-family: "Baloo 2"; src: url("../extension/fonts/baloo-2-latin-wght-normal.woff2") format("woff2"); font-weight: 400 800; }
+  :root {
+    --app: #eae6df; --rail: #f0f2f5; --list: #ffffff; --hover: #f5f6f6; --active: #f0f2f5; --line: #e9edef;
+    --text: #111b21; --muted: #667781; --chat: #efeae2; --doodle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180' fill='none' stroke='%23c9bfb2' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 30l4 8 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1z'/%3E%3Cpath d='M120 22c-4-6-14-2-10 6l10 9 10-9c4-8-6-12-10-6z'/%3E%3Cpath d='M70 70v-18l14-3v18'/%3E%3Ccircle cx='66' cy='70' r='4'/%3E%3Ccircle cx='80' cy='67' r='4'/%3E%3Ccircle cx='150' cy='80' r='10'/%3E%3Cpath d='M146 78h.01M154 78h.01M146 84c2 2 6 2 8 0'/%3E%3Cpath d='M28 120h24v16H28zM32 120v-6h16v6'/%3E%3Cpath d='M100 130l10-10 10 10-10 10z'/%3E%3Cpath d='M150 140c6 0 10 4 10 10M150 132c10 0 18 8 18 18'/%3E%3Cpath d='M60 160c4-6 10-6 14 0s10 6 14 0'/%3E%3C/svg%3E");
+    --in: #ffffff; --out: #d9fdd3; --out-text: #111b21; --tick: #53bdeb; --badge: #25d366; --badge-text: #fff;
+    --head: #f0f2f5; --input: #ffffff; --shadow: 0 1px .5px rgb(11 20 26 / .13);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --app: #0c1317; --rail: #202c33; --list: #111b21; --hover: #202c33; --active: #2a3942; --line: #222d34;
+      --text: #e9edef; --muted: #8696a0; --chat: #0b141a; --doodle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180' fill='none' stroke='%23182229' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 30l4 8 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1z'/%3E%3Cpath d='M120 22c-4-6-14-2-10 6l10 9 10-9c4-8-6-12-10-6z'/%3E%3Cpath d='M70 70v-18l14-3v18'/%3E%3Ccircle cx='66' cy='70' r='4'/%3E%3Ccircle cx='80' cy='67' r='4'/%3E%3Ccircle cx='150' cy='80' r='10'/%3E%3Cpath d='M146 78h.01M154 78h.01M146 84c2 2 6 2 8 0'/%3E%3Cpath d='M28 120h24v16H28zM32 120v-6h16v6'/%3E%3Cpath d='M100 130l10-10 10 10-10 10z'/%3E%3Cpath d='M150 140c6 0 10 4 10 10M150 132c10 0 18 8 18 18'/%3E%3Cpath d='M60 160c4-6 10-6 14 0s10 6 14 0'/%3E%3C/svg%3E");
+      --in: #202c33; --out: #005c4b; --out-text: #e9edef; --tick: #53bdeb; --badge: #00a884; --badge-text: #111b21;
+      --head: #202c33; --input: #2a3942; --shadow: 0 1px .5px rgb(11 20 26 / .13);
+      color-scheme: dark;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; height: 100vh; overflow: hidden; background: var(--app); color: var(--text); font: 15px/1.4 "Segoe UI", system-ui, sans-serif; }
+  .app { display: grid; grid-template-columns: 60px 340px 1fr; grid-template-rows: 100vh; height: 100vh; }
+  .rail { background: var(--rail); border-right: 1px solid var(--line); display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 16px 0; }
+  .rail b { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; color: var(--muted); }
+  .rail b.on { background: var(--active); color: var(--text); }
+  .rail b.set { margin-top: auto; }
+  .rail svg, .compose svg, .chat header .icons svg { width: 23px; height: 23px; }
+  .rail .me { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b, #ef4444); }
+  .list { background: var(--list); border-right: 1px solid var(--line); display: flex; flex-direction: column; min-width: 0; }
+  .list h1 { margin: 0; padding: 18px 18px 12px; font: 700 22px/1 "Segoe UI", system-ui, sans-serif; }
+  .search { margin: 0 14px 10px; padding: 9px 14px; border-radius: 10px; background: var(--hover); color: var(--muted); font-size: 14px; }
+  .filters { display: flex; gap: 6px; padding: 0 14px 10px; }
+  .filters span { padding: 4px 12px; border-radius: 999px; background: var(--hover); color: var(--muted); font-size: 13px; }
+  .filters span.on { background: color-mix(in srgb, var(--badge) 18%, transparent); color: var(--text); font-weight: 600; }
+  .row { display: grid; grid-template-columns: 49px 1fr auto; gap: 13px; align-items: center; padding: 9px 14px; margin: 0 8px; border-radius: 10px; }
+  .row > div:nth-child(2) { min-width: 0; overflow: hidden; border-bottom: 1px solid var(--line); padding-bottom: 9px; margin-bottom: -9px; }
+  .row.on { background: var(--active); }
+  .av { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; color: #fff; font-size: 17px; }
+  .row b { display: block; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row small { display: block; color: var(--muted); font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row .meta { white-space: nowrap; text-align: right; font-size: 12px; color: var(--muted); display: grid; gap: 4px; justify-items: end; }
+  .row .meta:has(.count) { color: var(--badge); }
+  .row .count { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: var(--badge); color: var(--badge-text); font-size: 11.5px; font-weight: 700; display: grid; place-items: center; }
+  .chat { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; background: var(--chat) var(--doodle) repeat; background-size: 180px 180px; }
+  .chat header { display: flex; align-items: center; gap: 12px; padding: 10px 18px; background: var(--head); border-bottom: 1px solid var(--line); }
+  .chat header .av { width: 40px; height: 40px; font-size: 15px; }
+  .chat header b { display: block; font-weight: 600; }
+  .chat header small { color: var(--muted); font-size: 13px; }
+  .chat header .icons { margin-left: auto; display: flex; gap: 18px; }
+  .chat header .icons { color: var(--muted); }
+  .msgs { flex: 1; min-height: 0; overflow: hidden; padding: 18px 452px 18px 6%; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px; }
+  .day { align-self: center; margin: 6px 0 10px; padding: 4px 12px; border-radius: 8px; background: var(--head); color: var(--muted); font-size: 12.5px; box-shadow: var(--shadow); }
+  .b { position: relative; max-width: min(70%, 420px); padding: 6px 9px 8px 10px; border-radius: 10px; background: var(--in); box-shadow: var(--shadow); font-size: 14.5px; }
+  .b .who { display: block; font-size: 13px; font-weight: 600; margin-bottom: 1px; }
+  .b .t { float: right; margin: 6px 0 -4px 10px; font-size: 11px; color: var(--muted); }
+  .b.out { align-self: flex-end; background: var(--out); color: var(--out-text); }
+  .b.out .t::after { content: " ✓✓"; color: var(--tick); letter-spacing: -2px; }
+  .b.first { margin-top: 6px; }
+  .b.first.in { border-top-left-radius: 0; }
+  .b.first.in::before { content: ""; position: absolute; left: -8px; top: 0; border-top: 0 solid transparent; border-right: 8px solid var(--in); border-bottom: 10px solid transparent; }
+  .b.first.out { border-top-right-radius: 0; }
+  .b.first.out::before { content: ""; position: absolute; right: -8px; top: 0; border-left: 8px solid var(--out); border-bottom: 10px solid transparent; }
+  .sticker { align-self: flex-end; position: relative; margin: 6px 0 2px; }
+  .sticker img { width: 168px; height: 168px; display: block; border-radius: 10px; }
+  .sticker .meta { text-align: right; margin-top: 2px; }
+  .sticker .snd { position: absolute; top: 8px; right: 8px; width: 30px; height: 30px; border-radius: 50%; background: rgb(11 20 26 / .55); color: #fff; display: grid; place-items: center; }
+  .sticker .snd svg { width: 17px; height: 17px; }
+  .sticker .t { color: var(--muted); font-size: 11.5px; }
+  .sticker .t::after { content: " ✓✓"; color: var(--tick); letter-spacing: -2px; }
+  .compose { display: flex; align-items: center; gap: 12px; padding: 10px 452px 12px 18px; background: var(--head); border-top: 1px solid var(--line); }
+  .compose b { display: grid; place-items: center; color: var(--muted); flex: none; }
+  .compose .field { flex: 1; padding: 10px 16px; border-radius: 10px; background: var(--input); color: var(--muted); font-size: 14.5px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="rail" aria-hidden="true"><b class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18.5l1.2-3.6A8 8 0 1 1 8.6 18z"/></svg></b><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 1-8.5 6"/><path d="M12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10z"/></svg></b><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4h3l5 4V6L7 10z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M19 6a8 8 0 0 1 0 12"/></svg></b><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M16 11a2.5 2.5 0 1 0 0-5"/><path d="M17.5 19a4.5 4.5 0 0 0-2.5-4"/></svg></b><b class="set"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3.9a7 7 0 0 0-2-1.2L14.2 3h-4l-.4 2.6a7 7 0 0 0-2 1.2l-2.4-.9-2 3.4 2 1.5a7 7 0 0 0 0 2.4l-2 1.5 2 3.4 2.4-.9a7 7 0 0 0 2 1.2l.4 2.6h4l.4-2.6a7 7 0 0 0 2-1.2l2.3.9 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"/></svg></b><span class="me"></span></nav>
+  <aside class="list">
+    <h1>Chats</h1>
+    <div class="search">Search or start a new chat</div>
+    <div class="filters"><span class="on">All</span><span>Unread</span><span>Groups</span></div>
+    <div class="row on"><span class="av" style="background:#7c5cff">FG</span><div><b>Family Group 🏠</b><small>Priya: Dinner pe sab aa rahe ho na?</small></div><div class="meta">9:41 PM</div></div>
+    <div class="row"><span class="av" style="background:#ef6c3a">R</span><div><b>Rahul</b><small>Bhai kal match dekhne chalein?</small></div><div class="meta">9:12 PM<span class="count">2</span></div></div>
+    <div class="row"><span class="av" style="background:#14a38b">OT</span><div><b>Office Team</b><small>Ananya: Deck ready hai, check karo</small></div><div class="meta">8:47 PM<span class="count">5</span></div></div>
+    <div class="row"><span class="av" style="background:#e2457a">P</span><div><b>Priya</b><small>Photo</small></div><div class="meta">7:30 PM</div></div>
+    <div class="row"><span class="av" style="background:#3b82f6">CG</span><div><b>College Gang 🎓</b><small>Vikram: Reunion kab hai?</small></div><div class="meta">Yesterday</div></div>
+    <div class="row"><span class="av" style="background:#a16207">M</span><div><b>Mummy</b><small>Khana kha liya?</small></div><div class="meta">Yesterday</div></div>
+    <div class="row"><span class="av" style="background:#0e7490">CS</span><div><b>Cricket Squad 🏏</b><small>Sunday 7 baje ground pe</small></div><div class="meta">Tuesday</div></div>
+  </aside>
+  <main class="chat">
+    <header><span class="av" style="background:#7c5cff">FG</span><div><b>Family Group 🏠</b><small>Mummy, Papa, Priya, Rahul, You</small></div><div class="icons" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h9A1.5 1.5 0 0 1 15 8.5v7a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 3 15.5v-7A1.5 1.5 0 0 1 4.5 7z"/><path d="M15 10.5l5.5-3v9l-5.5-3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14z"/><path d="M20 20l-4-4"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5h.01"/><path d="M12 12h.01"/><path d="M12 19h.01"/></svg></div></header>
+    <div class="msgs" id="msgs">
+      <span class="day">Today</span>
+      <div class="b in first"><span class="who" style="color:#e2457a">Priya</span>Dinner pe sab aa rahe ho na? 🍛<span class="t">9:38 PM</span></div>
+      <div class="b in"><span class="who" style="color:#a16207">Mummy</span>Haan, aur Rahul late mat aana 😄<span class="t">9:39 PM</span></div>
+      <div class="b out first">Pakka! Main 8 baje tak pahunch jaunga<span class="t">9:40 PM</span></div>
+      <div class="b in first"><span class="who" style="color:#ef6c3a">Rahul</span>Main toh time pe hi aata hoon 😎<span class="t">9:41 PM</span></div>
+    </div>
+    <div class="compose" aria-hidden="true"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg></b><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"/><path d="M8.5 14a4.5 4.5 0 0 0 7 0"/><path d="M9 9.5h.01"/><path d="M15 9.5h.01"/></svg></b><div class="field">Type a message</div><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5a3 3 0 0 1 3 3V12a3 3 0 0 1-6 0V6.5a3 3 0 0 1 3-3z"/><path d="M6 11.5a6 6 0 0 0 12 0"/><path d="M12 17.5V21"/></svg></b></div>
+  </main>
+</div>
+
+<script src="../extension/state/stickerJob.js"></script>
+<script src="../extension/state/recorder.js"></script>
+<script src="../extension/lib/i18n.js"></script>
+<script src="../extension/lib/ogg.js"></script>
+<script src="../extension/lib/webp.js"></script>
+<script src="../extension/lib/audio.js"></script>
+<script src="../extension/lib/frames.js"></script>
+<script src="../extension/lib/builder.js"></script>
+<script src="../extension/wa/sender.js"></script>
+<script src="../extension/ui/styles.js"></script>
+<script src="../extension/ui/icons.js"></script>
+<script src="../extension/ui/store.js"></script>
+<script src="harness-stubs.js"></script>
+<script src="../extension/ui/panel.js"></script>
+<script src="../extension/main.js"></script>
+</body>
+</html>
