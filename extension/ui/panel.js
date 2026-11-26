@@ -43,6 +43,8 @@
   let src = null; // { kind, file, url, video, bitmap, buffer, photo, photoUrl, sound, soundName, previewUrls }
   let built = null; // { webp, ogg, seconds, side, emoji, webpUrl, oggUrl, savedId }
   let library = [];
+  let libCount = 0; // shown on the tab; the full list loads only when the My stickers tab is open
+  let libRun = 0; // newest library request wins
   let status = { kind: "", text: "" };
   let abort = null;
   let recording = null; // { stream, recorder, chunks, timer, started }
@@ -128,6 +130,7 @@
         prefs = { ...prefs, ...p };
         WASI.i18n.setLang(prefs.lang);
         placeHandle(Number(prefs.handleY));
+        refreshLibrary();
         render();
       })
       .catch(() => render());
@@ -214,9 +217,11 @@
     host.dataset.wasiOpen = String(open);
     labelHandle();
     if (open) {
-      refreshLibrary();
       const first = panel.querySelector("button, input");
-      first && first.focus();
+      if (first) first.focus({ preventScroll: true });
+    } else {
+      // nothing keeps playing behind a closed panel
+      panel.querySelectorAll("video, audio").forEach((m) => m.pause());
     }
   }
 
@@ -282,7 +287,7 @@
             },
           },
           label,
-          id === "library" && library.length ? h("span", { class: "count", text: String(library.length) }) : null
+          id === "library" && libCount ? h("span", { class: "count", text: String(libCount) }) : null
         )
       )
     );
@@ -871,18 +876,33 @@
   const fromB64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
   let libUrls = [];
 
+  // Outside the My stickers tab only the count is read (small and fast). The full list, with every sticker's
+  // picture and sound, loads only while that tab is open. A late answer from an older request is dropped.
   async function refreshLibrary() {
-    try {
-      library = await WASI.store.list();
-    } catch (_) {
-      library = [];
-    }
-    library.sort((a, b) => Number(b.fav) - Number(a.fav) || b.created - a.created);
-    if (tab === "library") render();
-    else {
+    const run = ++libRun;
+    if (tab !== "library") {
+      let n = libCount;
+      try {
+        n = await WASI.store.count();
+      } catch (_) {
+        /* keep the old count */
+      }
+      if (run !== libRun) return;
+      libCount = n;
       const navEl = panel.querySelector("nav");
-      navEl && navEl.replaceWith(nav());
+      if (navEl) navEl.replaceWith(nav());
+      return;
     }
+    let list = [];
+    try {
+      list = await WASI.store.list();
+    } catch (_) {
+      list = [];
+    }
+    if (run !== libRun || tab !== "library") return;
+    library = list.sort((a, b) => Number(b.fav) - Number(a.fav) || b.created - a.created);
+    libCount = library.length;
+    render();
   }
 
   function libraryTab() {

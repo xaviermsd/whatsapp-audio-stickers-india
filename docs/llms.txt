@@ -6,7 +6,7 @@
 > tracking. Unofficial; not made by or affiliated with WhatsApp or Meta.
 
 ## Key facts
-- Version 1.1.0, updated 2026-11-27. Price: free.
+- Version 1.1.1, updated 2026-11-27. Price: free.
 - Inputs: MP4, WebM, MOV, GIF, PNG, JPG, MP3, M4A, WAV, OGG; or record voice or webcam in the panel.
 - Features: cut up to 15 seconds, speed 0.5x to 2x, boomerang, volume, auto level, fades, captions in Hindi,
   English or Hinglish, saved sticker library with pack export and import, app in Hindi and English.

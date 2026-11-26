@@ -32,17 +32,20 @@
 /* Handle: one lime tab that rides with the panel. Closed: on the right edge. Open: on the panel's left edge.
    Click to open or close, drag up or down to move it (position is remembered). */
 .handle {
-  position: fixed; z-index: 2147483002; right: 0; top: var(--hy, 42%); transform: translateY(-50%);
+  /* Moves with transform only (GPU), never with right/width, so it stays smooth while WhatsApp is busy. */
+  --hx: 0px; --hv: 0px;
+  position: fixed; z-index: 2147483002; right: 0; top: var(--hy, 42%); transform: translate3d(calc(var(--hx) + var(--hv)), -50%, 0);
+  will-change: transform;
   display: grid; justify-items: center; gap: 7px; width: 50px; padding: 11px 0 9px;
   border: 2px solid var(--ink-fixed); border-right: 0; border-radius: 18px 0 0 18px;
   background: var(--lime); color: var(--ink-fixed); cursor: pointer; touch-action: none; user-select: none;
   box-shadow: -4px 4px 0 0 var(--ink-fixed);
-  transition: right 280ms var(--ease), width 180ms var(--ease), background 160ms var(--ease), box-shadow 180ms var(--ease);
+  transition: transform 280ms var(--ease), background 160ms var(--ease), box-shadow 180ms var(--ease);
 }
-.handle:hover { width: 56px; background: var(--lime-hover); box-shadow: -5px 5px 0 0 var(--ink-fixed); }
+.handle:hover { --hv: -4px; background: var(--lime-hover); box-shadow: -5px 5px 0 0 var(--ink-fixed); }
 .handle:active { box-shadow: -2px 2px 0 0 var(--ink-fixed); }
-.handle.dragging { cursor: grabbing; transition: width 180ms var(--ease); box-shadow: -6px 8px 0 0 var(--ink-fixed); }
-.handle.is-open { right: min(424px, calc(100vw - 50px)); }
+.handle.dragging { cursor: grabbing; transition: none; box-shadow: -6px 8px 0 0 var(--ink-fixed); }
+.handle.is-open { --hx: calc(-1 * min(424px, calc(100vw - 50px))); }
 .handle-logo { display: grid; place-items: center; width: 32px; height: 32px; }
 .handle-logo img { width: 32px; height: 32px; display: block; -webkit-user-drag: none; pointer-events: none; filter: drop-shadow(1px 1px 0 rgb(8 8 8 / .25)); }
 .handle-logo svg { width: 24px; height: 24px; stroke-width: 2.2; }
@@ -64,9 +67,10 @@
 .panel {
   position: fixed; top: 0; right: 0; bottom: 0; z-index: 2147483001; width: min(424px, 100vw);
   display: flex; flex-direction: column; background: var(--bg); border-left: 2px solid var(--brut-border);
-  box-shadow: var(--shadow-lift); transition: transform 260ms var(--ease);
+  box-shadow: var(--shadow-lift); transition: transform 280ms var(--ease), visibility 0s linear 0s;
+  will-change: transform; contain: layout paint style;
 }
-.panel[hidden] { display: flex; transform: translateX(105%); visibility: hidden; }
+.panel[hidden] { display: flex; transform: translate3d(105%, 0, 0); visibility: hidden; transition: transform 280ms var(--ease), visibility 0s linear 280ms; }
 
 /* Header with the dot grid LabelzyKit uses for brand areas */
 header {

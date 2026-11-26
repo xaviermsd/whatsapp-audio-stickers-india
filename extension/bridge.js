@@ -9,6 +9,7 @@
   const TAG = "__wasi_india__";
   const LIB_KEY = "library";
   const PREFS_KEY = "prefs";
+  const COUNT_KEY = "libraryCount";
   const MAX_ITEMS = 60;
   const MAX_ITEM_CHARS = 3000000; // base64 of a 1 MB sticker plus a 1 MB sound fits under this
   const FONTS = [
@@ -50,6 +51,14 @@
   }
 
   const ops = {
+    // Just the number of saved stickers: cheap, so the panel can show it without loading every sticker.
+    async "lib.count"() {
+      const n = await get(COUNT_KEY);
+      if (typeof n === "number") return n;
+      const list = (await get(LIB_KEY)) || [];
+      await set(COUNT_KEY, list.length);
+      return list.length;
+    },
     async "lib.list"() {
       return (await get(LIB_KEY)) || [];
     },
@@ -58,7 +67,7 @@
       const list = ((await get(LIB_KEY)) || []).filter((x) => x.id !== clean.id);
       if (list.length >= MAX_ITEMS) throw new Error("libraryFull");
       list.unshift(clean);
-      await set(LIB_KEY, list);
+      await chrome.storage.local.set({ [LIB_KEY]: list, [COUNT_KEY]: list.length });
       return true;
     },
     async "lib.update"({ id, fav }) {
@@ -70,7 +79,7 @@
     },
     async "lib.delete"({ id }) {
       const list = ((await get(LIB_KEY)) || []).filter((x) => x.id !== id);
-      await set(LIB_KEY, list);
+      await chrome.storage.local.set({ [LIB_KEY]: list, [COUNT_KEY]: list.length });
       return true;
     },
     // Our bundled Baloo 2 font files, handed to the page as bytes (WhatsApp's page rules block font URLs).

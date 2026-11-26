@@ -4,6 +4,7 @@
   const mem = { library: [], prefs: {} };
   WASI.store = {
     list: async () => mem.library.slice(),
+    count: async () => mem.library.length,
     put: async (item) => {
       if (mem.library.length >= 60) throw new Error("libraryFull");
       mem.library = mem.library.filter((x) => x.id !== item.id);

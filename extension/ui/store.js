@@ -35,6 +35,7 @@
 
   WASI.store = {
     list: () => req("lib.list"),
+    count: () => req("lib.count"),
     put: (item) => req("lib.put", { item }),
     update: (id, fav) => req("lib.update", { id, fav }),
     remove: (id) => req("lib.delete", { id }),

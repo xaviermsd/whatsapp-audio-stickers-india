@@ -54,7 +54,7 @@ test("bridge only answers a fixed list of requests from this page", () => {
   assert.match(b, /ev\.source !== window \|\| ev\.origin !== location\.origin/);
   assert.match(b, /Object\.prototype\.hasOwnProperty\.call\(ops, d\.op\)/);
   const ops = [...b.matchAll(/async "([a-z.]+)"\(/g)].map((m) => m[1]).sort();
-  assert.deepEqual(ops, ["brand.get", "fonts.get", "lib.delete", "lib.list", "lib.put", "lib.update", "prefs.get", "prefs.set"]);
+  assert.deepEqual(ops, ["brand.get", "fonts.get", "lib.count", "lib.delete", "lib.list", "lib.put", "lib.update", "prefs.get", "prefs.set"]);
 });
 
 test("sending has a cooldown and only targets the open chat or yourself", () => {
