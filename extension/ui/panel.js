@@ -10,7 +10,7 @@
   const REPO_URL = "https://github.com/xaviermsd/whatsapp-audio-stickers-india";
   const SERVICES_URL = "https://www.worklancio.in/services?utm_source=github&utm_medium=extension&utm_campaign=wa-audio-stickers";
   const WHATSAPP_URL = "https://wa.me/919898528376";
-  const EMOJIS = ["🔊", "😂", "🤣", "😎", "😍", "🙏", "🔥", "🎉", "😡", "😭", "👍", "🇮🇳"];
+  const EMOJIS = ["🔊", "😂", "🤣", "😎", "😍", "🙏", "🔥", "🎉", "😡", "😭", "👍", "💯"];
 
   const { t } = WASI.i18n;
   const { icon, mark } = WASI.icons;

@@ -4,7 +4,7 @@ export const SITE = "https://xaviermsd.github.io/whatsapp-audio-stickers-india/"
 export const REPO = "https://github.com/xaviermsd/whatsapp-audio-stickers-india";
 export const RELEASE = REPO + "/releases/latest";
 export const OG = SITE + "brand/social-preview.png";
-export const VERSION = "1.0.0";
+export const VERSION = "1.0.1";
 export const UPDATED = "2026-11-27";
 
 export const KEYWORDS = [
