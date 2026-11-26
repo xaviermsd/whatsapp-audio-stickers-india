@@ -95,7 +95,7 @@ Funciona no **Chrome, Edge e Brave** no Windows, Mac e Linux (versão 116 ou mai
 <details>
 <summary><b>Ver a página de boas-vindas</b></summary>
 <br>
-<img src="../screenshots/welcome-page.png" alt="Página de boas-vindas depois da instalação" width="700">
+<img src="../screenshots/welcome.png" alt="Página de boas-vindas depois da instalação" width="700">
 </details>
 
 <details>

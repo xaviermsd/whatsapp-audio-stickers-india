@@ -97,7 +97,7 @@ It works on **Chrome, Edge and Brave** on Windows, Mac and Linux (version 116 or
 <details>
 <summary><b>Show me the welcome page</b></summary>
 <br>
-<img src="docs/screenshots/welcome-page.png" alt="Welcome page after install" width="700">
+<img src="docs/screenshots/welcome.png" alt="Welcome page after install" width="700">
 </details>
 
 <details>

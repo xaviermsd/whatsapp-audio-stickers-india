@@ -96,7 +96,7 @@ Bisa dipakai di **Chrome, Edge, dan Brave** di Windows, Mac, dan Linux (versi 11
 <details>
 <summary><b>Lihat halaman selamat datang</b></summary>
 <br>
-<img src="../screenshots/welcome-page.png" alt="Halaman selamat datang setelah pemasangan" width="700">
+<img src="../screenshots/welcome.png" alt="Halaman selamat datang setelah pemasangan" width="700">
 </details>
 
 <details>

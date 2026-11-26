@@ -91,7 +91,7 @@ WA ऑडियो स्टिकर इंडिया **WhatsApp Web** मे
 <details>
 <summary><b>वेलकम पेज दिखाएँ</b></summary>
 <br>
-<img src="../screenshots/welcome-page.png" alt="इंस्टॉल के बाद वेलकम पेज" width="700">
+<img src="../screenshots/welcome.png" alt="इंस्टॉल के बाद वेलकम पेज" width="700">
 </details>
 
 <details>

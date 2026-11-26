@@ -24,7 +24,7 @@ const browser = await chromium.launch({
   await page.goto(BASE.replace(/dev\/harness\.html$/, "extension/welcome.html"));
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(400);
-  await page.screenshot({ path: OUT + "welcome-page.png", fullPage: true });
+  await page.screenshot({ path: OUT + "welcome.png", fullPage: true });
   await ctx.close();
   if (process.env.ONLY === "welcome") {
     await browser.close();

@@ -31,7 +31,7 @@ const extId = sw.url().split("/")[2];
 await new Promise((r) => setTimeout(r, 1500));
 results.welcomeOpened = ctx.pages().some((p) => p.url().includes(`${extId}/welcome.html`));
 const welcome = ctx.pages().find((p) => p.url().includes("welcome.html"));
-if (welcome) await welcome.screenshot({ path: join(OUT, "welcome-page.png"), fullPage: true });
+if (welcome) await welcome.screenshot({ path: join(OUT, "welcome.png"), fullPage: true });
 
 const page = await ctx.newPage();
 const errors = [];
