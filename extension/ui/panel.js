@@ -127,6 +127,8 @@
     WASI.store
       .getPrefs()
       .then((p) => {
+        // first launch: follow the browser's language (Hindi browsers open in Hindi); a saved choice always wins
+        if (!p || !p.lang) p = { ...p, lang: /^hi\b/i.test(navigator.language || "") ? "hi" : "en" };
         prefs = { ...prefs, ...p };
         WASI.i18n.setLang(prefs.lang);
         placeHandle(Number(prefs.handleY));
@@ -221,6 +223,7 @@
       if (first) first.focus({ preventScroll: true });
     } else {
       // nothing keeps playing behind a closed panel
+      stopPart();
       panel.querySelectorAll("video, audio").forEach((m) => m.pause());
     }
   }
@@ -412,6 +415,8 @@
         try {
           s.sound = await WASI.audio.decode(await f.arrayBuffer());
           s.soundName = f.name;
+          s.soundUrl = URL.createObjectURL(f);
+          s.previewUrls.push(s.soundUrl);
           if (s.kind === "image") dispatch({ type: "edit", edit: { start: 0, end: Math.min(s.sound.duration, 10) } }), (job = { ...job, clip: { ...job.clip, duration: s.sound.duration } });
           else dispatch({ type: "edit", edit: {} });
           setStatus("", "");
@@ -459,6 +464,271 @@
     return c;
   }
 
+  // ---------- trim bar: waveform, two handles, drag the window, play the part, exact From and To ----------
+  // Every change goes through the job machine (dispatch edit), which clamps to the clip and to MAX_SECONDS.
+  let partPlayer = null; // { media, own, raf, stopAt } while "Play this part" runs
+  function stopPart() {
+    if (!partPlayer) return;
+    cancelAnimationFrame(partPlayer.raf);
+    partPlayer.media.pause();
+    if (partPlayer.own) partPlayer.media.removeAttribute("src");
+    partPlayer = null;
+    const b = mainEl && mainEl.querySelector(".trim-play");
+    if (b) b.replaceWith(playPartButton());
+    const ph = mainEl && mainEl.querySelector(".trim-head");
+    if (ph) ph.style.opacity = "0";
+  }
+
+  function playPartButton() {
+    return btn(partPlayer ? t("stopPart") : t("playPart"), partPlayer ? "stop" : "play", () => (partPlayer ? stopPart() : playPart()), "btn small trim-play");
+  }
+
+  function playPart() {
+    stopPart();
+    const e = job.edit;
+    // the sound the sticker will use: another file if picked, else the clip itself
+    let media;
+    let own = false;
+    if (src.sound && src.soundUrl) {
+      media = new Audio(src.soundUrl);
+      own = true;
+    } else if (src.kind === "video") {
+      media = src.video;
+      media.muted = false;
+    } else {
+      media = new Audio(src.url);
+      own = true;
+    }
+    media.playbackRate = e.speed;
+    media.currentTime = e.start;
+    partPlayer = { media, own, raf: 0, stopAt: e.end };
+    const head = mainEl.querySelector(".trim-head");
+    const dur = (job.clip && job.clip.duration) || 1;
+    const tick = () => {
+      if (!partPlayer) return;
+      const tt = media.currentTime;
+      if (head) {
+        head.style.opacity = "1";
+        head.style.left = `calc(10px + (100% - 20px) * ${Math.max(0, Math.min(1, (tt - viewStart()) / viewLen()))})`;
+      }
+      if (tt >= partPlayer.stopAt || media.ended) return stopPart();
+      partPlayer.raf = requestAnimationFrame(tick);
+    };
+    media
+      .play()
+      .then(() => {
+        if (partPlayer) partPlayer.raf = requestAnimationFrame(tick);
+      })
+      .catch(() => stopPart());
+    const b = mainEl.querySelector(".trim-play");
+    if (b) b.replaceWith(playPartButton());
+  }
+
+  let viewStart = () => 0;
+  let viewLen = () => (job.clip && job.clip.duration) || 1;
+  function trimBar(dur, showLength, lengthEl) {
+    const W = 760;
+    const H = 112; // canvas pixels (drawn at 2x for sharp lines)
+    const wave = h("canvas", { class: "trim-wave", width: W, height: H, "aria-hidden": "true" });
+    const sel = h("div", { class: "trim-sel" });
+    const head = h("div", { class: "trim-head", "aria-hidden": "true" });
+    const mkHandle = (key) =>
+      h("div", {
+        class: "trim-handle trim-" + key,
+        role: "slider",
+        tabindex: "0",
+        "aria-label": key === "start" ? t("start") : t("end"),
+        "aria-valuemin": "0",
+        "aria-valuemax": dur.toFixed(2),
+      });
+    // Long clips: the bar shows a 30 s window around the selection (a 3 s part of a 150 s clip would be 7 px wide)
+    const VIEW = Math.min(dur, 30);
+    let v0 = 0;
+    function ensureView() {
+      const e = job.edit;
+      if (dur <= VIEW) return (v0 = 0);
+      if (e.start < v0 || e.end > v0 + VIEW) v0 = Math.max(0, Math.min(dur - VIEW, (e.start + e.end) / 2 - VIEW / 2));
+    }
+    ensureView();
+    viewStart = () => v0;
+    viewLen = () => VIEW;
+    const viewNote = h("span", { class: "length trim-view" });
+    const hs = mkHandle("start");
+    const he = mkHandle("end");
+    const track = h("div", { class: "trim-track" }, wave, sel, head, hs, he);
+
+    const num = (key) => {
+      const input = h("input", {
+        type: "number",
+        min: "0",
+        max: dur.toFixed(2),
+        step: "0.1",
+        value: job.edit[key].toFixed(1),
+        class: "trim-num",
+        "aria-label": key === "start" ? t("from") : t("to"),
+      });
+      input.dataset.k = key; // the screenshot and demo scripts set times through these
+      input.addEventListener("input", () => {
+        if (input.value !== "") setRange({ [key]: Number(input.value) }, key, false);
+      });
+      input.addEventListener("change", () => paint(true));
+      return input;
+    };
+    const from = num("start");
+    const to = num("end");
+
+    // the sound to draw: another file if picked, else the clip's own sound
+    const buf = src.sound || src.buffer;
+    const bars = Math.max(60, Math.min(4000, Math.round((190 * dur) / VIEW)));
+    const peaks = buf ? WASI.audio.peaks(buf, bars) : null;
+    let max = 0.0001;
+    if (peaks) for (const p of peaks) max = Math.max(max, p);
+
+    function drawWave() {
+      const g = wave.getContext("2d");
+      g.clearRect(0, 0, W, H);
+      const styles = getComputedStyle(wave);
+      const on = styles.getPropertyValue("--wave-on").trim() || "#080808";
+      const off = styles.getPropertyValue("--wave-off").trim() || "#c9c9c4";
+      const i0 = Math.floor((v0 / dur) * bars);
+      const n = Math.max(1, Math.round((VIEW / dur) * bars));
+      const bw = W / n;
+      for (let k = 0; k < n; k++) {
+        const i = Math.min(bars - 1, i0 + k);
+        const tt = ((i + 0.5) / bars) * dur;
+        const inside = tt >= job.edit.start && tt <= job.edit.end;
+        const v = peaks ? Math.max(0.04, peaks[i] / max) : 0.04;
+        const bh = Math.max(4, v * (H - 16));
+        g.fillStyle = inside ? on : off;
+        g.beginPath();
+        g.roundRect(k * bw + bw * 0.18, (H - bh) / 2, Math.max(2, bw * 0.64), bh, 2);
+        g.fill();
+      }
+    }
+
+    // forceNums: rewrite the number boxes even if one has focus (after the person leaves the box)
+    function paint(forceNums) {
+      const e = job.edit;
+      ensureView();
+      const a = Math.max(0, Math.min(100, ((e.start - v0) / VIEW) * 100));
+      const b = Math.max(0, Math.min(100, ((e.end - v0) / VIEW) * 100));
+      viewNote.textContent = dur > VIEW ? t("trimView").replace("{a}", v0.toFixed(1)).replace("{b}", (v0 + VIEW).toFixed(1)).replace("{d}", dur.toFixed(1)) : "";
+      // positions map onto the inner width (the waveform has a 10 px margin each side)
+      const at = (p) => `calc(10px + (100% - 20px) * ${p / 100})`;
+      sel.style.left = at(a);
+      sel.style.width = `calc((100% - 20px) * ${Math.max(0, b - a) / 100})`;
+      hs.style.left = at(a);
+      he.style.left = at(b);
+      hs.setAttribute("aria-valuenow", e.start.toFixed(2));
+      hs.setAttribute("aria-valuetext", e.start.toFixed(1) + " " + t("seconds"));
+      he.setAttribute("aria-valuenow", e.end.toFixed(2));
+      he.setAttribute("aria-valuetext", e.end.toFixed(1) + " " + t("seconds"));
+      const focused = shadow.activeElement;
+      if (forceNums || focused !== from) from.value = e.start.toFixed(1);
+      if (forceNums || focused !== to) to.value = e.end.toFixed(1);
+      showLength();
+      drawWave();
+    }
+
+    // moves the range; "lead" is the end being moved, so the other one follows when needed
+    function setRange(patch, lead, seek = true) {
+      const MIN = 0.3;
+      let start = patch.start !== undefined ? patch.start : job.edit.start;
+      let end = patch.end !== undefined ? patch.end : job.edit.end;
+      start = Math.max(0, Math.min(dur, start));
+      end = Math.max(0, Math.min(dur, end));
+      if (lead === "start") {
+        if (end - start < MIN) end = Math.min(dur, start + MIN);
+        if (end - start > J.MAX_SECONDS) end = start + J.MAX_SECONDS;
+      } else if (lead === "end") {
+        if (end - start < MIN) start = Math.max(0, end - MIN);
+        if (end - start > J.MAX_SECONDS) start = end - J.MAX_SECONDS;
+      }
+      stopPart();
+      dispatch({ type: "edit", edit: { start, end } });
+      if (seek && src && src.kind === "video") src.video.currentTime = lead === "end" ? job.edit.end : job.edit.start;
+      paint(false);
+      afterEdit();
+    }
+
+    // pointer: drag a handle, or drag inside the selection to slide the whole part
+    const secAt = (clientX) => {
+      const r = track.getBoundingClientRect();
+      return Math.max(0, Math.min(dur, v0 + ((clientX - r.left - 10) / (r.width - 20)) * VIEW));
+    };
+    let drag = null;
+    track.addEventListener("pointerdown", (ev) => {
+      if (ev.button !== 0) return;
+      const tt = secAt(ev.clientX);
+      const e = job.edit;
+      const px = (track.getBoundingClientRect().width - 20) / VIEW;
+      const near = (x) => Math.abs(x - tt) * px < 14;
+      let mode;
+      if (ev.target === hs) mode = "start";
+      else if (ev.target === he) mode = "end";
+      else if (near(e.start) && !near(e.end)) mode = "start";
+      else if (near(e.end)) mode = "end";
+      else if (tt > e.start && tt < e.end) mode = "move";
+      else mode = tt < e.start ? "start" : "end"; // a click outside pulls the nearest end there
+      drag = { mode, t0: tt, s0: e.start, e0: e.end };
+      track.setPointerCapture(ev.pointerId);
+      track.classList.add("dragging");
+      if (mode !== "move") setRange({ [mode]: tt }, mode);
+      ev.preventDefault();
+    });
+    track.addEventListener("pointermove", (ev) => {
+      if (!drag) return;
+      const tt = secAt(ev.clientX);
+      if (drag.mode === "move") {
+        const len = drag.e0 - drag.s0;
+        const s0 = Math.max(0, Math.min(dur - len, drag.s0 + (tt - drag.t0)));
+        setRange({ start: s0, end: s0 + len }, null);
+      } else setRange({ [drag.mode]: tt }, drag.mode);
+    });
+    const stopDrag = () => {
+      drag = null;
+      track.classList.remove("dragging");
+    };
+    track.addEventListener("pointerup", stopDrag);
+    track.addEventListener("pointercancel", stopDrag);
+
+    // keyboard on the handles: arrows 0.1 s, Shift+arrows 1 s, Home and End
+    for (const [el, key] of [
+      [hs, "start"],
+      [he, "end"],
+    ]) {
+      el.addEventListener("keydown", (ev) => {
+        const step = ev.shiftKey ? 1 : 0.1;
+        let v = job.edit[key];
+        if (ev.key === "ArrowLeft" || ev.key === "ArrowDown") v -= step;
+        else if (ev.key === "ArrowRight" || ev.key === "ArrowUp") v += step;
+        else if (ev.key === "Home") v = 0;
+        else if (ev.key === "End") v = dur;
+        else return;
+        ev.preventDefault();
+        setRange({ [key]: v }, key);
+      });
+    }
+
+    const box = h(
+      "div",
+      { class: "field trim-box" },
+      track,
+      h(
+        "div",
+        { class: "trim-row" },
+        playPartButton(),
+        h("label", { class: "trim-time" }, h("span", { text: t("from") }), from),
+        h("label", { class: "trim-time" }, h("span", { text: t("to") }), to)
+      ),
+      lengthEl,
+      viewNote,
+      buf ? null : h("span", { class: "length", text: t("noSoundYet") })
+    );
+    requestAnimationFrame(() => paint(true));
+    return box;
+  }
+
   function editSection() {
     const e = job.edit;
     const dur = (job.clip && job.clip.duration) || 0;
@@ -466,33 +736,6 @@
     const lengthEl = h("span", { class: "length" });
     const showLength = () => (lengthEl.textContent = `${t("length")}: ${fmt((job.edit.end - job.edit.start) / job.edit.speed)} / ${J.MAX_SECONDS}${t("seconds")}`);
     showLength();
-
-    function slider(key, label) {
-      const out = h("span", { text: fmt(e[key]) });
-      const input = h("input", { type: "range", min: "0", max: String(dur), step: "0.05", value: String(e[key]), "aria-label": label });
-      input.addEventListener("input", () => {
-        const v = Number(input.value);
-        const patch = { [key]: v };
-        // keep the window under the max length by moving the other handle
-        if (key === "start" && job.edit.end - v > J.MAX_SECONDS) patch.end = v + J.MAX_SECONDS;
-        if (key === "end" && v - job.edit.start > J.MAX_SECONDS) patch.start = v - J.MAX_SECONDS;
-        if (key === "end" && v < job.edit.start) patch.start = v;
-        if (key === "start" && v > job.edit.end) patch.end = v;
-        dispatch({ type: "edit", edit: patch });
-        out.textContent = fmt(job.edit[key]);
-        const other = key === "start" ? "end" : "start";
-        const o = mainEl.querySelector(`input[data-k="${other}"]`);
-        if (o) {
-          o.value = String(job.edit[other]);
-          o.parentElement.lastChild.textContent = fmt(job.edit[other]);
-        }
-        if (src && src.kind === "video") src.video.currentTime = job.edit[key];
-        showLength();
-        afterEdit();
-      });
-      input.dataset.k = key;
-      return h("div", { class: "trim" }, h("span", { class: "label", text: label }), input, out);
-    }
 
     function chips(key, options, extraClass) {
       return h(
@@ -549,7 +792,7 @@
       "section",
       {},
       stepTitle(2, "step2"),
-      dur > 0 && src.kind !== "animated" ? h("div", { class: "field" }, slider("start", t("start")), slider("end", t("end")), lengthEl) : null,
+      dur > 0 && src.kind !== "animated" ? trimBar(dur, showLength, lengthEl) : null,
       h("div", { class: "field" }, h("span", { class: "label", text: t("speed") }), chips("speed", J.SPEEDS.map((s) => [s, `${s}x`]))),
       moving ? h("div", { class: "field" }, check("boomerang", t("boomerang"))) : null,
       h("div", { class: "field" }, h("div", { class: "trim" }, h("span", { class: "label", text: t("volume") }), vol, volOut), check("louder", t("louder")), check("fade", t("fade"))),
@@ -1025,6 +1268,7 @@
     s.photo && s.photo.close && s.photo.close();
   }
   function freeSource() {
+    stopPart();
     freeOne(src);
     src = null;
   }

@@ -40,7 +40,7 @@ iPhone and WhatsApp Web.
 
 - 🎬 **Any clip:** MP4, WebM, MOV, GIF, PNG, JPG, MP3, M4A, WAV, OGG.
 - 🎙️ **Record right inside WhatsApp:** your voice, or a selfie video.
-- ✂️ **Cut, speed up, slow down, boomerang,** make it louder, fade in and out.
+- ✂️ **Cut on a waveform,** play just that part, speed up, slow down, boomerang, make it louder, fade in and out.
 - 🔤 **Captions in Hindi, English or Hinglish,** drawn in a proper Devanagari font.
 - 📦 **My stickers library:** save favourites and send them again in one click.
 - 🔒 **100% on your computer.** No server, no sign-up, no tracking.
@@ -65,6 +65,7 @@ with features none of them have:
 | 🆕 | **Voice sticker animation** | Plain audio becomes a moving sound wave on a lime card, or over your own photo. |
 | 🆕 | **Hindi, English and Hinglish captions** | Bold outlined text in Baloo 2, which has real Devanagari letters. |
 | 🆕 | **App in Hindi and English** | Switch with one tap: EN or हिं. |
+| 🆕 | **Waveform trim bar** | See the sound, drag two handles, play just that part, or type exact times. |
 | 🆕 | **Speed control** 0.5x to 2x | Slow-mo drama or chipmunk comedy. |
 | 🆕 | **Boomerang loop** | Plays forward, then backward. |
 | 🆕 | **My stickers library** | Up to 60 saved stickers, favourites on top, one-click resend. |
@@ -153,7 +154,8 @@ No clip? Press **Record voice** or **Record video** and make one right now (up t
 
 ### 3. Cut and style
 
-- Drag **Start** and **End** to keep the best part (up to 15 seconds).
+- Drag the two lime handles on the **waveform** to keep the best part (up to 15 seconds). You can see where the loud bit is.
+- Press **Play this part** to hear just that bit, or type exact times in **From** and **To**.
 - Pick a **speed**, turn on **Boomerang**, set the **volume**.
 - **Make it louder** levels quiet clips. **Soft fade** removes clicks.
 - **Frame:** crop to fill the square, or show the whole picture.

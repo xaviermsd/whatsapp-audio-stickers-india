@@ -192,6 +192,22 @@ input[type="text"]::placeholder { color: var(--muted); opacity: 1; }
 details { border: 1.5px solid var(--line); border-radius: 14px; padding: 10px 14px 8px; background: var(--surface); }
 details summary { cursor: pointer; font-size: 14px; font-weight: 700; }
 details[open] summary { margin-bottom: 10px; }
+/* Trim bar: waveform with two handles, drag the middle to slide the part */
+.trim-box { gap: 10px; }
+.trim-track { position: relative; height: 64px; border: 1.5px solid var(--line-strong); border-radius: 14px; background: var(--surface); touch-action: none; cursor: pointer; user-select: none; }
+.trim-track.dragging { cursor: grabbing; }
+.trim-wave { position: absolute; inset: 4px 10px; width: calc(100% - 20px); height: calc(100% - 8px); --wave-on: #080808; --wave-off: #c9c9c4; pointer-events: none; }
+.wasi[data-theme="dark"] .trim-wave { --wave-on: #d6ff36; --wave-off: #3d4430; }
+.trim-sel { position: absolute; top: -1.5px; bottom: -1.5px; border: 2.5px solid var(--ink-fixed); border-radius: 12px; background: color-mix(in srgb, var(--lime) 30%, transparent); pointer-events: none; margin: 0; }
+.wasi[data-theme="dark"] .trim-sel { border-color: var(--lime); background: color-mix(in srgb, var(--lime) 12%, transparent); }
+.trim-handle { position: absolute; top: 50%; width: 13px; height: 44px; transform: translate(-50%, -50%); border: 2px solid var(--ink-fixed); border-radius: 7px; background: var(--lime); box-shadow: 1.5px 1.5px 0 0 var(--ink-fixed); cursor: ew-resize; }
+.trim-handle::after { content: ""; position: absolute; inset: 13px 3px; border-left: 2px solid var(--ink-fixed); border-right: 2px solid var(--ink-fixed); opacity: .55; }
+.trim-handle:focus-visible { outline: 3px solid var(--lime); outline-offset: 2px; box-shadow: 0 0 0 5px var(--ink-fixed); }
+.trim-head { position: absolute; top: 4px; bottom: 4px; width: 2px; border-radius: 2px; background: #e11d48; opacity: 0; pointer-events: none; transition: opacity 120ms; }
+.trim-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.trim-time { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--muted); }
+.trim-num { width: 74px; min-height: 34px; padding: 4px 8px 2px; border: 1.5px solid var(--line-strong); border-radius: 10px; background: var(--surface); color: var(--text); font: 600 14px/1 var(--font); font-variant-numeric: tabular-nums; }
+.trim-num:focus { outline: none; border-color: var(--text); box-shadow: 0 0 0 3px var(--lime); }
 .length { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 13px; font-weight: 600; }
 
 .progress { height: 12px; border: 2px solid var(--ink-fixed); border-radius: 99px; background: var(--surface); overflow: hidden; }
