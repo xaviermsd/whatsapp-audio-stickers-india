@@ -28,6 +28,12 @@
 
 <img src="docs/media/demo.gif" alt="Demo: a clip is dropped into the panel, cut, captioned and sent as a sticker with sound" width="860">
 
+<br><br>
+
+<a href="https://youtube.com/shorts/xVgfo2w_pRA"><img src="docs/brand/github-video-preview.jpg" alt="Watch the 60 second WA Audio Stickers India Short on YouTube" width="720"></a>
+
+**[▶ Watch the 60 second Short on YouTube](https://youtube.com/shorts/xVgfo2w_pRA)**
+
 </div>
 
 ---
