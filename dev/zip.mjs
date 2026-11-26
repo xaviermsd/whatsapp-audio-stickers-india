@@ -14,6 +14,9 @@ await cp(`${root}LICENSE`, `${stage}/${name}/LICENSE.txt`);
 const zip = `${root}dist/${name}-v${version}.zip`;
 // Windows: use its own bsdtar (Git Bash puts GNU tar first, which cannot write zip files).
 const tar = process.platform === "win32" ? "C:/Windows/System32/tar.exe" : "tar";
-execFileSync(tar, ["-a", "-c", "-f", `../../${name}-v${version}.zip`, "."], { cwd: `${stage}/${name}` });
+// List the top-level entries by name: entries stored as "./x" break Windows Explorer's Extract All.
+const { readdirSync } = await import("node:fs");
+const entries = readdirSync(`${stage}/${name}`);
+execFileSync(tar, ["-a", "-c", "-f", `../../${name}-v${version}.zip`, ...entries], { cwd: `${stage}/${name}` });
 await rm(stage, { recursive: true, force: true });
 console.log("wrote", zip);
