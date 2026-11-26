@@ -16,6 +16,23 @@ const browser = await chromium.launch({
   args: ["--autoplay-policy=no-user-gesture-required"],
 });
 
+// The welcome page shown after install (the README "Show me the welcome page" image). Taken from the same files the
+// extension ships, so it can never go stale against them.
+{
+  const ctx = await browser.newContext({ viewport: { width: 1100, height: 900 }, deviceScaleFactor: 1.5, colorScheme: "light" });
+  const page = await ctx.newPage();
+  await page.goto(BASE.replace(/dev\/harness\.html$/, "extension/welcome.html"));
+  await page.evaluate(() => document.fonts.ready);
+  await page.waitForTimeout(400);
+  await page.screenshot({ path: OUT + "welcome-page.png", fullPage: true });
+  await ctx.close();
+  if (process.env.ONLY === "welcome") {
+    await browser.close();
+    console.log("welcome page saved");
+    process.exit(0);
+  }
+}
+
 for (const scheme of ["dark", "light"]) {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 860 }, deviceScaleFactor: 2, colorScheme: scheme });
   const page = await ctx.newPage();
