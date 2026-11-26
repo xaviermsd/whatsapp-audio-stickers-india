@@ -123,6 +123,7 @@ Then do steps 3 to 5 above and pick the `extension` folder inside the repo.
 
 Open **[web.whatsapp.com](https://web.whatsapp.com)**, open any chat, then click the **lime tab** on the right
 edge. You can also click the extension button or press **Alt + Shift + S**.
+The same tab closes the panel again, and you can **drag it up or down** to wherever suits you. It remembers the spot.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/00-launcher-dark.png">

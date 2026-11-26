@@ -88,7 +88,7 @@
     shadow.append(style);
     const wrap = h("div", { class: "wasi" });
     shadow.append(wrap);
-    launcher = h("button", { class: "launcher", type: "button", title: t("launcher"), "aria-label": t("launcher"), onclick: toggle }, icon("sound"));
+    launcher = buildHandle();
     panel = h("div", { class: "panel", role: "dialog", "aria-label": t("title"), hidden: true });
     wrap.append(launcher, panel);
     document.documentElement.append(host);
@@ -118,6 +118,8 @@
         logoUrl = URL.createObjectURL(new Blob([b.buf], { type: "image/png" }));
         const old = panel.querySelector(".mark");
         if (old) old.replaceWith(logo());
+        const hl = launcher.querySelector(".handle-logo");
+        if (hl) hl.replaceChildren(h("img", { src: logoUrl, alt: "", draggable: "false" }));
       })
       .catch(() => {}); // the drawn placeholder mark stays
     WASI.store
@@ -125,6 +127,7 @@
       .then((p) => {
         prefs = { ...prefs, ...p };
         WASI.i18n.setLang(prefs.lang);
+        placeHandle(Number(prefs.handleY));
         render();
       })
       .catch(() => render());
@@ -136,10 +139,80 @@
     shadow.querySelector(".wasi").dataset.theme = dark ? "dark" : "light";
   }
 
+  // ---------- handle: one tab that rides with the panel; click to open or close, drag up or down ----------
+  function buildHandle() {
+    const waves = h("span", { class: "handle-waves", "aria-hidden": "true" }, h("i"), h("i"), h("i"), h("i"));
+    const chev = h("span", { class: "handle-chev", "aria-hidden": "true" }, icon("chevron"));
+    const grip = h("span", { class: "handle-grip", "aria-hidden": "true" });
+    const btn = h("button", { class: "handle launcher", type: "button", "aria-expanded": "false" },
+      h("span", { class: "handle-logo", "aria-hidden": "true" }, icon("sound")), waves, chev, grip);
+    let start = null;
+    let dragged = false;
+    btn.addEventListener("pointerdown", (e) => {
+      if (e.button !== 0) return;
+      start = { y: e.clientY, top: btn.getBoundingClientRect().top + btn.offsetHeight / 2 };
+      dragged = false;
+      btn.setPointerCapture(e.pointerId);
+    });
+    btn.addEventListener("pointermove", (e) => {
+      if (!start) return;
+      const dy = e.clientY - start.y;
+      if (!dragged && Math.abs(dy) < 6) return;
+      dragged = true;
+      btn.classList.add("dragging");
+      placeHandle(((start.top + dy) / root.innerHeight) * 100);
+    });
+    // the browser's own image or link drag would cancel ours
+    btn.addEventListener("dragstart", (e) => e.preventDefault());
+    btn.addEventListener("pointercancel", () => {
+      start = null;
+      btn.classList.remove("dragging");
+    });
+    btn.addEventListener("pointerup", () => {
+      if (!start) return;
+      start = null;
+      btn.classList.remove("dragging");
+      if (dragged) savePrefs({ handleY: Math.round(handleY) });
+    });
+    btn.addEventListener("click", (e) => {
+      if (dragged) {
+        e.preventDefault();
+        dragged = false;
+        return;
+      }
+      toggle();
+    });
+    btn.addEventListener("keydown", (e) => {
+      // arrow keys move it, for people who do not use a mouse
+      if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+        e.preventDefault();
+        placeHandle(handleY + (e.key === "ArrowUp" ? -4 : 4));
+        savePrefs({ handleY: Math.round(handleY) });
+      }
+    });
+    return btn;
+  }
+
+  let handleY = 42;
+  function placeHandle(pct) {
+    if (!Number.isFinite(pct)) return;
+    handleY = Math.max(12, Math.min(88, pct));
+    launcher.style.setProperty("--hy", handleY + "%");
+  }
+
+  function labelHandle() {
+    const label = open ? t("closePanel") : t("launcher");
+    launcher.setAttribute("aria-label", label + ". " + t("handleHint"));
+    launcher.title = label + "\n" + t("handleHint");
+    launcher.setAttribute("aria-expanded", String(open));
+    launcher.classList.toggle("is-open", open);
+  }
+
   function toggle(force) {
     open = typeof force === "boolean" ? force : !open;
     panel.hidden = !open;
-    launcher.hidden = open;
+    host.dataset.wasiOpen = String(open);
+    labelHandle();
     if (open) {
       refreshLibrary();
       const first = panel.querySelector("button, input");
@@ -156,7 +229,7 @@
   function render() {
     host.dataset.wasiTab = tab;
     panel.setAttribute("aria-label", t("title"));
-    launcher.title = t("launcher");
+    labelHandle();
     panel.replaceChildren(header(), nav(), (mainEl = h("main", {}, tab === "make" ? makeTab() : tab === "library" ? libraryTab() : helpTab())), footer());
   }
 

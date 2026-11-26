@@ -109,6 +109,8 @@
       linkWhatsApp: "WhatsApp us",
       footer: "Made with love in India by Worklancio",
       launcher: "Make an audio sticker",
+      closePanel: "Close the panel",
+      handleHint: "Click to open or close. Drag up or down to move it.",
     },
     hi: {
       title: "WA ऑडियो स्टिकर",
@@ -208,6 +210,8 @@
       linkWhatsApp: "हमें WhatsApp करें",
       footer: "भारत में प्यार से बनाया, Worklancio द्वारा",
       launcher: "ऑडियो स्टिकर बनाएँ",
+      closePanel: "पैनल बंद करें",
+      handleHint: "खोलने या बंद करने के लिए क्लिक करें। जगह बदलने के लिए ऊपर या नीचे खींचें।",
     },
   };
 

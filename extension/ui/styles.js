@@ -29,15 +29,37 @@
 .wasi :focus-visible { outline: 3px solid var(--lime); outline-offset: 2px; box-shadow: 0 0 0 5px var(--ink-fixed); border-radius: 8px; }
 .wasi button, .wasi input { font-family: var(--font); }
 
-/* Launcher: a lime tab on the right edge of WhatsApp Web */
-.launcher {
-  position: fixed; right: 0; top: 42%; z-index: 2147483000; display: grid; place-items: center;
-  width: 44px; height: 52px; border: 2px solid var(--ink-fixed); border-right: 0; border-radius: 14px 0 0 14px;
-  background: var(--lime); color: var(--ink-fixed); cursor: pointer; box-shadow: -3px 3px 0 0 var(--ink-fixed);
-  transition: width 180ms var(--ease), transform 180ms var(--ease);
+/* Handle: one lime tab that rides with the panel. Closed: on the right edge. Open: on the panel's left edge.
+   Click to open or close, drag up or down to move it (position is remembered). */
+.handle {
+  position: fixed; z-index: 2147483002; right: 0; top: var(--hy, 42%); transform: translateY(-50%);
+  display: grid; justify-items: center; gap: 7px; width: 50px; padding: 11px 0 9px;
+  border: 2px solid var(--ink-fixed); border-right: 0; border-radius: 18px 0 0 18px;
+  background: var(--lime); color: var(--ink-fixed); cursor: pointer; touch-action: none; user-select: none;
+  box-shadow: -4px 4px 0 0 var(--ink-fixed);
+  transition: right 280ms var(--ease), width 180ms var(--ease), background 160ms var(--ease), box-shadow 180ms var(--ease);
 }
-.launcher:hover { width: 50px; background: var(--lime-hover); }
-.launcher svg { width: 24px; height: 24px; stroke-width: 2.2; }
+.handle:hover { width: 56px; background: var(--lime-hover); box-shadow: -5px 5px 0 0 var(--ink-fixed); }
+.handle:active { box-shadow: -2px 2px 0 0 var(--ink-fixed); }
+.handle.dragging { cursor: grabbing; transition: width 180ms var(--ease); box-shadow: -6px 8px 0 0 var(--ink-fixed); }
+.handle.is-open { right: min(424px, calc(100vw - 50px)); }
+.handle-logo { display: grid; place-items: center; width: 32px; height: 32px; }
+.handle-logo img { width: 32px; height: 32px; display: block; -webkit-user-drag: none; pointer-events: none; filter: drop-shadow(1px 1px 0 rgb(8 8 8 / .25)); }
+.handle-logo svg { width: 24px; height: 24px; stroke-width: 2.2; }
+.handle-waves { display: flex; align-items: center; gap: 3px; height: 14px; }
+.handle-waves i { display: block; width: 3px; height: 100%; border-radius: 3px; background: var(--ink-fixed); transform: scaleY(.35); }
+.handle-waves i:nth-child(2) { transform: scaleY(.7); }
+.handle-waves i:nth-child(3) { transform: scaleY(.5); }
+.handle:hover .handle-waves i, :host([data-wasi-state=building]) .handle-waves i { animation: wasi-wave 820ms ease-in-out infinite; }
+.handle-waves i:nth-child(2) { animation-delay: -200ms; }
+.handle-waves i:nth-child(3) { animation-delay: -420ms; }
+.handle-waves i:nth-child(4) { animation-delay: -620ms; }
+@keyframes wasi-wave { 0%, 100% { transform: scaleY(.3); } 50% { transform: scaleY(1); } }
+.handle-chev { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--ink-fixed); color: var(--lime); }
+.handle-chev svg { width: 15px; height: 15px; stroke-width: 2.6; transition: transform 280ms var(--ease); }
+.handle.is-open .handle-chev svg { transform: rotate(180deg); }
+.handle-grip { width: 16px; height: 6px; opacity: .45; background-image: radial-gradient(var(--ink-fixed) 1.1px, transparent 1.3px); background-size: 4px 3px; }
+.wasi[data-theme=dark] .handle { box-shadow: -4px 4px 0 0 #000; }
 
 .panel {
   position: fixed; top: 0; right: 0; bottom: 0; z-index: 2147483001; width: min(424px, 100vw);
@@ -217,6 +239,6 @@ footer a { color: var(--text); font-weight: 800; text-decoration: underline; tex
 .recdot { width: 12px; height: 12px; border-radius: 50%; background: var(--danger); animation: pulse 1s ease-in-out infinite; }
 .rectime { font-size: 28px; font-weight: 800; font-variant-numeric: tabular-nums; }
 @keyframes pulse { 50% { opacity: 0.3; } }
-@media (prefers-reduced-motion: reduce) { .panel, .launcher, .progress > div, .btn { transition: none; } .recdot { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .handle-waves i { animation: none !important; } .handle-chev svg, .panel, .handle, .progress > div, .btn { transition: none; } .recdot { animation: none; } }
 `;
 })(typeof globalThis !== "undefined" ? globalThis : this);
