@@ -191,4 +191,15 @@ await writeFile(new URL("llms.txt", docs), `# WA Audio Stickers India
 ${FAQS.map(([q, a]) => `- **${q}** ${a}`).join("\n")}
 `);
 await writeFile(new URL(".nojekyll", docs), "");
+
+// README quick answers: visible question headings with answer-first text, from the same FAQ list as the site
+{
+  const readme = new URL("../README.md", import.meta.url);
+  let s = await readFile(readme, "utf8");
+  const re = /<!-- SEO:README-FAQ -->[\s\S]*?<!-- \/SEO:README-FAQ -->/;
+  if (!re.test(s)) throw new Error("README: no SEO:README-FAQ markers");
+  const md = FAQS.map(([q, a]) => `### ${q}\n\n${a}`).join("\n\n");
+  s = s.replace(re, () => `<!-- SEO:README-FAQ -->\n${md}\n<!-- /SEO:README-FAQ -->`);
+  await writeFile(readme, s);
+}
 console.log("site SEO written");
