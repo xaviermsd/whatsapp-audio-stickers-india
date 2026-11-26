@@ -38,7 +38,7 @@ mengeluarkan suara saat diketuk, di Android, iPhone, dan WhatsApp Web.
 
 - 🎬 **Klip apa saja:** MP4, WebM, MOV, GIF, PNG, JPG, MP3, M4A, WAV, OGG.
 - 🎙️ **Rekam langsung di WhatsApp:** suaramu, atau video selfie.
-- ✂️ **Potong, percepat, perlambat, bikin bolak-balik (boomerang),** keraskan suara, dan beri efek muncul dan hilang pelan.
+- ✂️ **Potong di gelombang suara, dengarkan bagiannya dulu, percepat, perlambat, bikin bolak-balik (boomerang),** keraskan suara, dan beri efek muncul dan hilang pelan.
 - 🔤 **Teks dalam bahasa Hindi, Inggris, atau Hinglish,** dengan font Devanagari yang benar.
 - 📦 **Koleksi "My stickers":** simpan stiker favorit dan kirim lagi dengan sekali klik.
 - 🔒 **100% di komputermu.** Tanpa server, tanpa daftar akun, tanpa pelacakan.
@@ -65,6 +65,7 @@ dari nol, dengan fitur yang tidak dimiliki satu pun dari alat itu:
 | 🆕 | **Animasi stiker suara** | Audio biasa berubah jadi gelombang suara yang bergerak di atas kartu hijau lime, atau di atas fotomu sendiri. |
 | 🆕 | **Teks Hindi, Inggris, dan Hinglish** | Huruf tebal bergaris tepi dengan font Baloo 2, yang punya huruf Devanagari asli. |
 | 🆕 | **Aplikasi dalam bahasa Hindi dan Inggris** | Ganti dengan sekali ketuk: EN atau हिं. |
+| 🆕 | **Bilah potong gelombang suara** | Lihat suaranya, geser dua pegangan, dengarkan bagian itu saja, atau ketik waktu tepatnya. |
 | 🆕 | **Atur kecepatan** 0,5x sampai 2x | Drama gerak lambat atau komedi suara cempreng. |
 | 🆕 | **Boomerang** | Diputar maju, lalu mundur. |
 | 🆕 | **Koleksi "My stickers"** | Simpan sampai 60 stiker, favorit di paling atas, kirim ulang sekali klik. |
@@ -150,7 +151,8 @@ juga (maksimal 15 detik).
 
 ### 3. Potong dan percantik
 
-- Geser **"Start"** dan **"End"** untuk mengambil bagian terbaik (maksimal 15 detik).
+- Geser dua pegangan hijau lime di atas **gelombang suara** untuk mengambil bagian terbaik (maksimal 15 detik). Kelihatan bagian yang paling keras.
+- Tekan **"Play this part"** untuk mendengar bagian itu saja, atau ketik waktu tepatnya di **"From"** dan **"To"**.
 - Pilih kecepatan di **"Speed"**, nyalakan **"Boomerang loop"**, atur **"Volume"**.
 - **"Make it louder"** menyamakan klip yang suaranya pelan. **"Soft fade in and out"** menghilangkan bunyi klik.
 - **"Frame":** potong supaya kotaknya penuh, atau tampilkan seluruh gambar.

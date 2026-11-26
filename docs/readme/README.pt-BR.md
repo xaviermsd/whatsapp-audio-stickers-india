@@ -38,7 +38,7 @@ quando ele encosta nela, no Android, no iPhone e no WhatsApp Web.
 
 - 🎬 **Qualquer clipe:** MP4, WebM, MOV, GIF, PNG, JPG, MP3, M4A, WAV, OGG.
 - 🎙️ **Grave direto no WhatsApp:** sua voz ou um vídeo de selfie.
-- ✂️ **Corte, acelere, deixe em câmera lenta, faça bumerangue,** aumente o volume, coloque entrada e saída suaves.
+- ✂️ **Corte numa forma de onda, ouça o trecho antes, acelere, deixe em câmera lenta, faça bumerangue,** aumente o volume, coloque entrada e saída suaves.
 - 🔤 **Legendas em hindi, inglês ou hinglish,** com uma fonte devanágari de verdade.
 - 📦 **Biblioteca "My stickers":** salve suas favoritas e envie de novo com um clique.
 - 🔒 **100% no seu computador.** Sem servidor, sem cadastro, sem rastreamento.
@@ -65,6 +65,7 @@ do zero, com recursos que nenhuma delas tem:
 | 🆕 | **Animação para figurinha de voz** | Um áudio simples vira uma onda sonora em movimento num cartão verde-limão, ou em cima de uma foto sua. |
 | 🆕 | **Legendas em hindi, inglês e hinglish** | Texto grosso com contorno na fonte Baloo 2, que tem letras devanágari de verdade. |
 | 🆕 | **App em hindi e inglês** | Troque com um toque: EN ou हिं. |
+| 🆕 | **Barra de corte com forma de onda** | Veja o som, arraste duas alças, ouça só o trecho ou digite os tempos exatos. |
 | 🆕 | **Controle de velocidade** de 0,5x a 2x | Drama em câmera lenta ou comédia com voz de esquilo. |
 | 🆕 | **Bumerangue** | Toca para frente e depois para trás. |
 | 🆕 | **Biblioteca "My stickers"** | Até 60 figurinhas salvas, favoritas no topo, reenvio com um clique. |
@@ -149,7 +150,8 @@ Não tem clipe? Aperte **"Record voice"** (gravar voz) ou **"Record video"** (gr
 
 ### 3. Corte e deixe do seu jeito
 
-- Arraste **"Start"** e **"End"** para ficar só com a melhor parte (até 15 segundos).
+- Arraste as duas alças lima sobre a **forma de onda** para ficar só com a melhor parte (até 15 segundos). Dá para ver onde está o trecho mais alto.
+- Aperte **"Play this part"** para ouvir só esse trecho, ou digite os tempos exatos em **"From"** e **"To"**.
 - Escolha a velocidade em **"Speed"**, ligue o **"Boomerang loop"** e ajuste o volume em **"Volume"**.
 - **"Make it louder"** equilibra clipes baixinhos. **"Soft fade in and out"** tira os estalos.
 - **"Frame":** corte para preencher o quadrado ou mostre a imagem inteira.

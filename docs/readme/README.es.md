@@ -38,7 +38,7 @@ cuando lo toca, en Android, iPhone y WhatsApp Web.
 
 - 🎬 **Cualquier clip:** MP4, WebM, MOV, GIF, PNG, JPG, MP3, M4A, WAV, OGG.
 - 🎙️ **Graba ahí mismo en WhatsApp:** tu voz o un video selfie.
-- ✂️ **Recorta, acelera, pon en cámara lenta, haz un bumerán,** sube el volumen y agrega entrada y salida suaves.
+- ✂️ **Recorta sobre la forma de onda, escucha la parte antes, acelera, pon en cámara lenta, haz un bumerán,** sube el volumen y agrega entrada y salida suaves.
 - 🔤 **Textos en hindi, inglés o hinglish,** con una fuente devanagari de verdad.
 - 📦 **Biblioteca "My stickers":** guarda tus favoritos y vuelve a enviarlos con un clic.
 - 🔒 **100% en tu computadora.** Sin servidor, sin registro, sin rastreo.
@@ -65,6 +65,7 @@ la nuestra desde cero, con funciones que ninguna de ellas tiene:
 | 🆕 | **Animación para stickers de voz** | Un audio solo se convierte en una onda de sonido en movimiento sobre una tarjeta verde lima, o sobre tu propia foto. |
 | 🆕 | **Textos en hindi, inglés y hinglish** | Letras gruesas con contorno en Baloo 2, que tiene letras devanagari reales. |
 | 🆕 | **App en hindi e inglés** | Cambia con un toque: EN o हिं. |
+| 🆕 | **Barra de recorte con forma de onda** | Mira el sonido, arrastra dos manijas, escucha solo esa parte o escribe los tiempos exactos. |
 | 🆕 | **Control de velocidad** de 0.5x a 2x | Drama en cámara lenta o comedia con voz de ardilla. |
 | 🆕 | **Bumerán** | Se reproduce hacia adelante y luego hacia atrás. |
 | 🆕 | **Biblioteca "My stickers"** | Hasta 60 stickers guardados, favoritos arriba, reenvío con un clic. |
@@ -151,7 +152,8 @@ Suelta un video, GIF, foto o audio en el recuadro, haz clic para elegir un archi
 
 ### 3. Recorta y dale estilo
 
-- Arrastra **"Start"** y **"End"** para quedarte con la mejor parte (hasta 15 segundos).
+- Arrastra las dos manijas lima sobre la **forma de onda** para quedarte con la mejor parte (hasta 15 segundos). Se ve dónde está lo más fuerte.
+- Presiona **"Play this part"** para escuchar solo esa parte, o escribe los tiempos exactos en **"From"** y **"To"**.
 - Elige la velocidad en **"Speed"**, activa **"Boomerang loop"** y ajusta el **"Volume"**.
 - **"Make it louder"** empareja los clips que se oyen bajito. **"Soft fade in and out"** quita los chasquidos.
 - **"Frame":** recorta para llenar el cuadrado o muestra la imagen completa.
