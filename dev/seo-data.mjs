@@ -40,7 +40,7 @@ export const FAQS = [
   ["Why does my sticker have no sound for my friend?",
     "Their WhatsApp needs to be up to date to play sound stickers. If WhatsApp Web itself says it sent the picture without sound, reload WhatsApp Web and send again after a few seconds."],
   ["How do I update to the newest version?",
-    "Download the latest zip from GitHub Releases, Extract All, then on chrome://extensions remove the old one and Load unpacked the new folder. Your saved stickers stay in your browser."],
+    "Download the latest zip from GitHub Releases and Extract All, then copy the new files over your existing extension folder (replace all). On chrome://extensions, click the reload button on WA Audio Stickers India and refresh WhatsApp Web. Keep the same folder: Chrome ties your saved stickers to it. Export a pack first as a backup."],
   ["Is this an official WhatsApp tool?",
     "No. It is an unofficial, open-source tool made by Worklancio in India. It is not made by, linked to or approved by WhatsApp or Meta."],
 ];

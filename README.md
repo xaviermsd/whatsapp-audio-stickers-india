@@ -391,7 +391,7 @@ Their WhatsApp needs to be up to date to play sound stickers. If WhatsApp Web it
 
 ### How do I update to the newest version?
 
-Download the latest zip from GitHub Releases, Extract All, then on chrome://extensions remove the old one and Load unpacked the new folder. Your saved stickers stay in your browser.
+Download the latest zip from GitHub Releases and Extract All, then copy the new files over your existing extension folder (replace all). On chrome://extensions, click the reload button on WA Audio Stickers India and refresh WhatsApp Web. Keep the same folder: Chrome ties your saved stickers to it. Export a pack first as a backup.
 
 ### Is this an official WhatsApp tool?
 
