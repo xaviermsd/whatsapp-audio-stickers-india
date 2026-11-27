@@ -30,9 +30,9 @@
 
 <br><br>
 
-<a href="https://youtube.com/shorts/xVgfo2w_pRA"><img src="docs/brand/github-video-preview.jpg" alt="Watch the 60 second WA Audio Stickers India Short on YouTube" width="720"></a>
+<a href="https://youtube.com/shorts/cxH-RmL564A"><img src="docs/brand/github-video-preview.jpg" alt="Watch the 57 second WA Audio Stickers India Short on YouTube" width="720"></a>
 
-**[▶ Watch the 60 second Short on YouTube](https://youtube.com/shorts/xVgfo2w_pRA)**
+**[▶ Watch the 57 second Short on YouTube](https://youtube.com/shorts/cxH-RmL564A)**
 
 </div>
 
