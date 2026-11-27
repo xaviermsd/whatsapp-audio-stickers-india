@@ -647,6 +647,22 @@ or Meta.
 
 ---
 
+## ⭐ Star History & Support
+
+If this made your group chat laugh, please **⭐ [star the repo](https://github.com/xaviermsd/whatsapp-audio-stickers-india/stargazers)** and share it with a friend. Every star helps more people discover the project, and contributions, translations, and bug reports are always welcome.
+
+<div align="center">
+  <a href="https://www.star-history.com/?repos=xaviermsd%2Fwhatsapp-audio-stickers-india&type=date&legend=top-left">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=xaviermsd/whatsapp-audio-stickers-india&type=date&legend=top-left&theme=dark" />
+      <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=xaviermsd/whatsapp-audio-stickers-india&type=date&legend=top-left" />
+      <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=xaviermsd/whatsapp-audio-stickers-india&type=date&legend=top-left" />
+    </picture>
+  </a>
+</div>
+
+---
+
 <a id="worklancio"></a>
 
 ## 💚 Made by Worklancio
