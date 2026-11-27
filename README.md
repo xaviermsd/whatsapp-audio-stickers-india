@@ -649,7 +649,7 @@ or Meta.
 
 ## ⭐ Star History & Support
 
-If this made your group chat laugh, please **⭐ [star the repo](https://github.com/xaviermsd/whatsapp-audio-stickers-india/stargazers)** and share it with a friend. Every star helps more people discover the project, and contributions, translations, and bug reports are always welcome.
+If this made your group chat laugh, please **⭐ star the repo** and share it with a friend. Every star helps more people discover the project, and contributions, translations, and bug reports are always welcome.
 
 <div align="center">
   <a href="https://www.star-history.com/?repos=xaviermsd%2Fwhatsapp-audio-stickers-india&type=date&legend=top-left">
