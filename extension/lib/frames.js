@@ -66,10 +66,14 @@
     ctx.clearRect(0, 0, side, side);
     if (extra && extra.background) extra.background(ctx, side);
     if (img && iw && ih) {
-      const scale = edit.fit === "contain" ? Math.min(side / iw, side / ih) : Math.max(side / iw, side / ih);
+      const baseScale = edit.fit === "contain" ? Math.min(side / iw, side / ih) : Math.max(side / iw, side / ih);
+      const zoom = Math.max(1, Math.min(3, Number(edit.zoom) || 1));
+      const scale = baseScale * zoom;
       const w = iw * scale;
       const h = ih * scale;
-      ctx.drawImage(img, (side - w) / 2, (side - h) / 2, w, h);
+      const panX = Math.max(-2, Math.min(2, Number(edit.panX) || 0));
+      const panY = Math.max(-2, Math.min(2, Number(edit.panY) || 0));
+      ctx.drawImage(img, (side - w) / 2 + panX * side, (side - h) / 2 + panY * side, w, h);
     }
     if (extra && extra.overlay) extra.overlay(ctx, side);
     if (edit.text) drawCaption(ctx, edit.text, side, edit.textPos);

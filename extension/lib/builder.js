@@ -5,14 +5,15 @@
   "use strict";
   const WASI = (root.WASI = root.WASI || {});
   const MAX_STICKER_BYTES = 1000000;
+  const SWEET_BYTES = 480000; // budget-friendly sweet spot (fast send, crisp on phones)
   const TARGET_BYTES = 920000; // room for EXIF and frame headers
   const SIDES = [512, 448, 384, 320, 256, 192];
-  const QUALITIES = [0.82, 0.68, 0.55, 0.44, 0.35];
+  const QUALITIES = [0.76, 0.66, 0.56, 0.45, 0.35];
   const LOWEST_QUALITY = 0.22;
 
   function fpsFor(seconds) {
-    if (seconds <= 4) return 20;
-    if (seconds <= 8) return 15;
+    if (seconds <= 4) return 16;
+    if (seconds <= 8) return 14;
     return 12;
   }
 
@@ -55,6 +56,16 @@
       }
       return avgCache.get(key);
     }
+    // First try the budget-friendly 480 KB sweet spot at crisp sizes (512..384) and high quality (0.76..0.56)
+    for (const side of [512, 448, 384]) {
+      for (const every of [1, 2]) {
+        const count = Math.ceil(frames.length / every);
+        for (const q of [0.76, 0.66, 0.56]) {
+          const est = (await avg(side, q)) * count + count * 32 + 2048;
+          if (est <= SWEET_BYTES) return { side, every, quality: q };
+        }
+      }
+    }
     for (const side of SIDES) {
       for (const every of [1, 2, 3]) {
         const count = Math.ceil(frames.length / every);
@@ -96,7 +107,7 @@
   }
 
   // Turns frames + Ogg into the final WebP that fits, lowering quality, then fps, then size if needed.
-  async function packWebp(frames, ogg, { pack = "", author = "", emoji = "🔊" } = {}, signal, onProgress) {
+  async function packWebp(frames, ogg, { pack = "whatsapp-audio-stickers-india", author = "whatsapp-audio-stickers-india", emoji = "🔊" } = {}, signal, onProgress) {
     frames = await WASI.frames.dedupe(frames);
     const meta = {
       "sticker-pack-id": await packId(pack, author),

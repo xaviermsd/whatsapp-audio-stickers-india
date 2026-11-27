@@ -153,12 +153,91 @@ h2 .step {
 .btn.small { min-height: 34px; padding: 5px 11px 3px; font-size: 13px; border-radius: 10px; }
 .btn.small svg { width: 16px; height: 16px; }
 
+.clip-bar {
+  display: flex; align-items: center; gap: 6px; padding: 6px 8px 6px 12px; margin-bottom: 12px;
+  border: 1.5px solid var(--line-strong); border-radius: 14px; background: var(--surface);
+}
+.clip-bar .filename { flex: 1; min-width: 0; font-weight: 700; color: var(--text); }
+.clip-bar .btn.small { min-height: 30px; padding: 3px 9px 2px; font-size: 12.5px; border-radius: 9px; }
+
+.preview-studio { display: grid; gap: 10px; }
+[data-build] .preview { margin-bottom: 12px; }
 .preview {
-  position: relative; display: grid; place-items: center; aspect-ratio: 1 / 1; width: 100%; max-width: 250px;
-  margin: 0 auto 12px; border: 2px solid var(--brut-border); border-radius: 22px; overflow: hidden;
+  position: relative; aspect-ratio: 1 / 1; width: 100%; max-width: 224px;
+  margin: 0 auto; border: 2px solid var(--brut-border); border-radius: 22px; overflow: hidden;
   background: var(--surface-2) repeating-conic-gradient(var(--surface-2) 0 25%, var(--surface) 0 50%) 0 0 / 18px 18px;
 }
-.preview video, .preview img, .preview canvas { width: 100%; height: 100%; object-fit: contain; }
+.preview.preview-stage {
+  aspect-ratio: auto; width: fit-content; max-width: 100%; border-radius: 16px;
+  background: #080808; display: inline-block; line-height: 0;
+}
+.preview-stage-wrap { display: grid; place-items: center; }
+.preview video, .preview img, .preview canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain;
+  transform: translate(calc(var(--pan-x, 0) * 100%), calc(var(--pan-y, 0) * 100%)) scale(var(--zoom, 1));
+  transform-origin: center center; transition: transform 120ms var(--ease);
+  touch-action: none; user-select: none;
+}
+.preview.preview-stage video, .preview.preview-stage img {
+  position: relative; inset: auto; width: auto; height: auto; max-width: 100%; max-height: 270px;
+  transform: none; object-fit: contain; display: block;
+}
+.preview.panning video, .preview.panning img { transition: none; cursor: grabbing; }
+.preview[data-fit="cover"] video, .preview[data-fit="cover"] img { object-fit: cover; }
+.preview[data-fit="contain"] video, .preview[data-fit="contain"] img { object-fit: contain; }
+.preview.preview-stage[data-fit="cover"] video, .preview.preview-stage[data-fit="cover"] img { object-fit: contain; }
+.preview video { cursor: pointer; }
+.crop-box {
+  position: absolute; z-index: 2; border: 2px solid var(--lime);
+  box-shadow: 0 0 0 9999px rgb(8 8 8 / 0.58); cursor: move; touch-action: none; user-select: none;
+}
+.crop-grid {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(to right, transparent 33.2%, rgb(255 255 255 / 0.35) 33.2% 33.5%, transparent 33.5% 66.5%, rgb(255 255 255 / 0.35) 66.5% 66.8%, transparent 66.8%),
+    linear-gradient(to bottom, transparent 33.2%, rgb(255 255 255 / 0.35) 33.2% 33.5%, transparent 33.5% 66.5%, rgb(255 255 255 / 0.35) 66.5% 66.8%, transparent 66.8%);
+}
+.crop-resize {
+  position: absolute; right: -7px; bottom: -7px; width: 15px; height: 15px;
+  border: 2px solid var(--ink-fixed); border-radius: 4px; background: var(--lime);
+  box-shadow: 1.5px 1.5px 0 0 var(--ink-fixed); cursor: nwse-resize; touch-action: none;
+}
+.preview-play {
+  position: absolute; inset: 0; margin: auto; width: 52px; height: 52px; padding: 0;
+  display: grid; place-items: center; border-radius: 50%; cursor: pointer;
+  background: var(--lime); color: var(--ink-fixed); border: 2px solid var(--ink-fixed);
+  box-shadow: 3px 3px 0 0 var(--ink-fixed);
+  transition: opacity 160ms var(--ease), transform 160ms var(--ease), background 160ms var(--ease);
+}
+.preview-play:hover { background: var(--lime-hover); transform: scale(1.06); }
+.preview-play svg { width: 22px; height: 22px; }
+.preview[data-playing="true"] .preview-play { opacity: 0; pointer-events: none; }
+.preview[data-playing="true"]:hover .preview-play { opacity: 0.95; pointer-events: auto; }
+
+.player-bar {
+  display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; max-width: 280px; margin: 0 auto;
+  padding: 5px 8px; border: 1.5px solid var(--line-strong); border-radius: 999px; background: var(--surface);
+}
+.pbtn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px; height: 30px; padding: 0 11px;
+  border: 1.5px solid var(--line-strong); border-radius: 999px; background: var(--surface-2); color: var(--text);
+  font-size: 12.5px; font-weight: 700; cursor: pointer; transition: background 140ms var(--ease), border-color 140ms var(--ease);
+}
+.pbtn:hover { border-color: var(--text); }
+.pbtn.on { background: var(--lime); color: var(--ink-fixed); border-color: var(--ink-fixed); }
+.pbtn svg { width: 14px; height: 14px; }
+.player-time { flex: 1; text-align: center; font-size: 12.5px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--muted); }
+
+.frame-bar {
+  display: grid; gap: 8px; padding: 10px 12px;
+  border: 1.5px solid var(--line); border-radius: 16px; background: var(--surface);
+}
+.frame-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.frame-row .label { font-size: 13px; font-weight: 700; }
+.zoom-row { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; }
+.zoom-row .label { font-size: 13px; font-weight: 700; color: var(--muted); }
+.zoom-val { font-size: 12.5px; font-weight: 800; font-variant-numeric: tabular-nums; min-width: 36px; text-align: right; }
+
 .filename { color: var(--muted); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .field { display: grid; gap: 7px; }
@@ -260,8 +339,8 @@ footer a { color: var(--text); font-weight: 800; text-decoration: underline; tex
 .rectime { font-size: 28px; font-weight: 800; font-variant-numeric: tabular-nums; }
 @keyframes pulse { 50% { opacity: 0.3; } }
 /* Clip row: Change and Remove */
-.clip-row .btn.danger { color: var(--danger); }
-.clip-row .btn.danger:hover:not([disabled]) { border-color: var(--danger); background: var(--danger-soft); }
+.clip-row .btn.danger, .clip-bar .btn.danger { color: var(--danger); }
+.clip-row .btn.danger:hover:not([disabled]), .clip-bar .btn.danger:hover:not([disabled]) { border-color: var(--danger); background: var(--danger-soft); }
 .another-row { justify-content: center; margin-top: 6px; }
 .btn.ghost { border-style: dashed; }
 

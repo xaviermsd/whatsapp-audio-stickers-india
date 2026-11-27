@@ -39,7 +39,7 @@
   let rec = R.initial();
   let tab = "make";
   let open = false;
-  let prefs = { lang: "en", pack: "", author: "", emoji: "🔊", fit: "cover", textPos: "bottom" };
+  let prefs = { lang: "en", pack: "whatsapp-audio-stickers-india", author: "whatsapp-audio-stickers-india", emoji: "🔊", fit: "cover", textPos: "bottom" };
   let src = null; // { kind, file, url, video, bitmap, buffer, photo, photoUrl, sound, soundName, previewUrls }
   let built = null; // { webp, ogg, seconds, side, emoji, webpUrl, oggUrl, savedId }
   let library = [];
@@ -131,6 +131,8 @@
         // first launch: follow the browser's language (Hindi browsers open in Hindi); a saved choice always wins
         if (!p || !p.lang) p = { ...p, lang: /^hi\b/i.test(navigator.language || "") ? "hi" : "en" };
         prefs = { ...prefs, ...p };
+        if (!prefs.pack) prefs.pack = "whatsapp-audio-stickers-india";
+        if (!prefs.author) prefs.author = "whatsapp-audio-stickers-india";
         WASI.i18n.setLang(prefs.lang);
         placeHandle(Number(prefs.handleY));
         refreshLibrary();
@@ -365,17 +367,242 @@
 
   function sourceSection() {
     const s = src || {};
-    const pv = h("div", { class: "preview" });
+    const isCropStage = s.kind !== "audio" && job.edit.fit === "cover";
+    const pv = h("div", {
+      class: isCropStage ? "preview preview-stage" : "preview",
+      "data-fit": job.edit.fit,
+      style: `--zoom:${job.edit.zoom || 1};--pan-x:${job.edit.panX || 0};--pan-y:${job.edit.panY || 0}`,
+    });
+    const stageWrap = isCropStage ? h("div", { class: "preview-stage-wrap" }, pv) : pv;
+    const studioKids = [stageWrap];
+    let panned = false;
+    let mediaEl = null;
+    let overlayBtn = null;
     if (s.kind === "video") {
-      s.video.controls = true;
+      s.video.controls = false;
       s.video.muted = false;
+      s.video.playsInline = true;
       s.video.style.cssText = "";
+      const fmtSec = (v) => {
+        const n = Math.max(0, Math.floor(Number.isFinite(v) ? v : 0));
+        return Math.floor(n / 60) + ":" + String(n % 60).padStart(2, "0");
+      };
+      overlayBtn = h("button", { class: "preview-play", type: "button", "aria-label": t("playVideo") }, icon("play"));
+      const playBtn = h("button", { class: "pbtn on", type: "button" }, icon("play"), h("span", { text: t("playVideo") }));
+      const stopBtn = h("button", { class: "pbtn", type: "button" }, icon("stop"), h("span", { text: t("stopVideo") }));
+      const timeEl = h("span", { class: "player-time", text: `${fmtSec(s.video.currentTime)} / ${fmtSec(s.video.duration)}` });
+      const syncVideoUI = () => {
+        const playing = !s.video.paused && !s.video.ended;
+        pv.dataset.playing = String(playing);
+        overlayBtn.setAttribute("aria-label", playing ? t("pauseVideo") : t("playVideo"));
+        overlayBtn.replaceChildren(icon(playing ? "pause" : "play"));
+        playBtn.classList.toggle("on", !playing);
+        playBtn.replaceChildren(icon(playing ? "pause" : "play"), h("span", { text: playing ? t("pauseVideo") : t("playVideo") }));
+        timeEl.textContent = `${fmtSec(s.video.currentTime)} / ${fmtSec(s.video.duration)}`;
+      };
+      const toggleVideo = (ev) => {
+        if (ev) ev.stopPropagation();
+        if (panned) {
+          panned = false;
+          return;
+        }
+        if (partPlayer) {
+          stopPart();
+          syncVideoUI();
+          return;
+        }
+        if (s.video.paused || s.video.ended) {
+          const e = job.edit;
+          const start = e.start || 0;
+          const end = e.end > start ? e.end : s.video.duration || 0;
+          const resumeAt = s.video.currentTime >= start && s.video.currentTime < end - 0.05 ? s.video.currentTime : start;
+          playPart(resumeAt);
+        } else {
+          s.video.pause();
+        }
+      };
+      const stopVideo = () => {
+        stopPart();
+        s.video.pause();
+        s.video.currentTime = job.edit.start || 0;
+        syncVideoUI();
+      };
+      s.video.onclick = toggleVideo;
+      overlayBtn.onclick = toggleVideo;
+      playBtn.onclick = toggleVideo;
+      stopBtn.onclick = stopVideo;
+      s.video.onplay = syncVideoUI;
+      s.video.onpause = syncVideoUI;
+      s.video.onended = syncVideoUI;
+      s.video.ontimeupdate = () => {
+        timeEl.textContent = `${fmtSec(s.video.currentTime)} / ${fmtSec(s.video.duration)}`;
+      };
+      syncVideoUI();
+      mediaEl = s.video;
       pv.append(s.video);
+      if (!isCropStage) pv.append(overlayBtn);
+      studioKids.push(h("div", { class: "player-bar" }, playBtn, stopBtn, timeEl));
     } else if (s.kind === "image" || s.kind === "animated") {
-      pv.append(h("img", { src: s.url, alt: "" }));
+      mediaEl = h("img", { src: s.url, alt: "" });
+      pv.append(mediaEl);
     } else if (s.kind === "audio") {
       if (s.photoUrl) pv.append(h("img", { src: s.photoUrl, alt: "" }));
       else pv.append(voicePreview());
+    }
+    if (s.kind !== "audio") {
+      const fitChips = h(
+        "div",
+        { class: "chips" },
+        [
+          ["cover", t("cropShort")],
+          ["contain", t("fitShort")],
+        ].map(([value, label]) =>
+          h("button", {
+            class: "chip",
+            type: "button",
+            text: label,
+            "aria-pressed": String(job.edit.fit === value),
+            onclick: (ev) => {
+              dispatch({ type: "edit", edit: { fit: value } });
+              savePrefs({ fit: value });
+              afterEdit();
+              render();
+            },
+          })
+        )
+      );
+      const zoomIn = h("input", { type: "range", min: "1", max: "2.5", step: "0.05", value: String(job.edit.zoom || 1), "aria-label": t("zoom") });
+      const zoomVal = h("span", { class: "zoom-val", text: `${(job.edit.zoom || 1).toFixed(1)}x` });
+      let syncCropBox = () => {};
+      if (isCropStage && mediaEl) {
+        const resizeHandle = h("div", { class: "crop-resize", "aria-hidden": "true" });
+        const cropBox = h("div", { class: "crop-box" }, h("div", { class: "crop-grid" }), overlayBtn || null, resizeHandle);
+        pv.append(cropBox);
+        syncCropBox = () => {
+          const mw = mediaEl.clientWidth;
+          const mh = mediaEl.clientHeight;
+          if (!mw || !mh) return;
+          const minD = Math.min(mw, mh);
+          const size = minD / (job.edit.zoom || 1);
+          const cx = mw / 2 - (job.edit.panX || 0) * size;
+          const cy = mh / 2 - (job.edit.panY || 0) * size;
+          const left = Math.max(0, Math.min(mw - size, cx - size / 2));
+          const top = Math.max(0, Math.min(mh - size, cy - size / 2));
+          cropBox.style.left = left + "px";
+          cropBox.style.top = top + "px";
+          cropBox.style.width = size + "px";
+          cropBox.style.height = size + "px";
+        };
+        let boxDrag = null;
+        cropBox.addEventListener("pointerdown", (ev) => {
+          if (ev.button !== 0 || ev.target.closest("button")) return;
+          const mw = mediaEl.clientWidth;
+          const mh = mediaEl.clientHeight;
+          if (!mw || !mh) return;
+          const isRes = ev.target === resizeHandle;
+          const left = parseFloat(cropBox.style.left) || 0;
+          const top = parseFloat(cropBox.style.top) || 0;
+          const size = parseFloat(cropBox.style.width) || Math.min(mw, mh);
+          boxDrag = { mode: isRes ? "resize" : "move", x: ev.clientX, y: ev.clientY, left, top, size, mw, mh, moved: false };
+          cropBox.setPointerCapture(ev.pointerId);
+          ev.stopPropagation();
+        });
+        cropBox.addEventListener("pointermove", (ev) => {
+          if (!boxDrag) return;
+          const dx = ev.clientX - boxDrag.x;
+          const dy = ev.clientY - boxDrag.y;
+          if (!boxDrag.moved && Math.hypot(dx, dy) < 3) return;
+          boxDrag.moved = true;
+          panned = true;
+          const minD = Math.min(boxDrag.mw, boxDrag.mh);
+          if (boxDrag.mode === "move") {
+            const left = Math.max(0, Math.min(boxDrag.mw - boxDrag.size, boxDrag.left + dx));
+            const top = Math.max(0, Math.min(boxDrag.mh - boxDrag.size, boxDrag.top + dy));
+            const panX = (boxDrag.mw / 2 - (left + boxDrag.size / 2)) / boxDrag.size;
+            const panY = (boxDrag.mh / 2 - (top + boxDrag.size / 2)) / boxDrag.size;
+            dispatch({ type: "edit", edit: { panX, panY } });
+            syncCropBox();
+          } else {
+            const delta = Math.max(dx, dy);
+            const maxS = Math.min(boxDrag.mw - boxDrag.left, boxDrag.mh - boxDrag.top, minD);
+            const minS = minD / 2.5;
+            const size = Math.max(minS, Math.min(maxS, boxDrag.size + delta));
+            const zoom = Math.max(1, Math.min(2.5, minD / size));
+            const panX = (boxDrag.mw / 2 - (boxDrag.left + size / 2)) / size;
+            const panY = (boxDrag.mh / 2 - (boxDrag.top + size / 2)) / size;
+            dispatch({ type: "edit", edit: { zoom, panX, panY } });
+            zoomIn.value = String(job.edit.zoom);
+            zoomVal.textContent = `${job.edit.zoom.toFixed(1)}x`;
+            syncCropBox();
+          }
+          afterEdit();
+        });
+        const stopBox = () => { boxDrag = null; };
+        cropBox.addEventListener("pointerup", stopBox);
+        cropBox.addEventListener("pointercancel", stopBox);
+        mediaEl.addEventListener("loadedmetadata", syncCropBox, { once: true });
+        mediaEl.addEventListener("load", syncCropBox, { once: true });
+        requestAnimationFrame(syncCropBox);
+      } else {
+        let panDrag = null;
+        pv.addEventListener("pointerdown", (ev) => {
+          if (ev.button !== 0 || ev.target.closest("button")) return;
+          panDrag = { x: ev.clientX, y: ev.clientY, px: job.edit.panX || 0, py: job.edit.panY || 0, moved: false };
+          pv.setPointerCapture(ev.pointerId);
+        });
+        pv.addEventListener("pointermove", (ev) => {
+          if (!panDrag) return;
+          const dx = ev.clientX - panDrag.x;
+          const dy = ev.clientY - panDrag.y;
+          if (!panDrag.moved && Math.hypot(dx, dy) < 4) return;
+          panDrag.moved = true;
+          panned = true;
+          pv.classList.add("panning");
+          const side = pv.clientWidth || 224;
+          dispatch({ type: "edit", edit: { panX: panDrag.px + dx / side, panY: panDrag.py + dy / side } });
+          pv.style.setProperty("--pan-x", String(job.edit.panX));
+          pv.style.setProperty("--pan-y", String(job.edit.panY));
+          afterEdit();
+        });
+        const stopPan = () => {
+          if (!panDrag) return;
+          panDrag = null;
+          pv.classList.remove("panning");
+        };
+        pv.addEventListener("pointerup", stopPan);
+        pv.addEventListener("pointercancel", stopPan);
+      }
+      zoomIn.addEventListener("input", () => {
+        const z = Number(zoomIn.value);
+        dispatch({ type: "edit", edit: { zoom: z } });
+        pv.style.setProperty("--zoom", String(job.edit.zoom));
+        zoomVal.textContent = `${job.edit.zoom.toFixed(1)}x`;
+        syncCropBox();
+        afterEdit();
+      });
+      const centerBtn = h("button", {
+        class: "chip",
+        type: "button",
+        text: t("centerFrame"),
+        onclick: () => {
+          dispatch({ type: "edit", edit: { panX: 0, panY: 0, zoom: 1 } });
+          pv.style.setProperty("--pan-x", "0");
+          pv.style.setProperty("--pan-y", "0");
+          pv.style.setProperty("--zoom", "1");
+          zoomIn.value = "1";
+          zoomVal.textContent = "1.0x";
+          syncCropBox();
+          afterEdit();
+        },
+      });
+      studioKids.push(
+        h(
+          "div",
+          { class: "frame-bar" },
+          h("div", { class: "frame-row" }, h("span", { class: "label", text: t("frame") }), fitChips, centerBtn),
+          h("div", { class: "zoom-row" }, h("span", { class: "label", text: t("zoom") }), zoomIn, zoomVal)
+        )
+      );
     }
     const extra = [];
     if (s.kind === "audio") {
@@ -440,9 +667,8 @@
     return h(
       "section",
       {},
-      stepTitle(1, "step1"),
-      pv,
-      h("div", { class: "row clip-row" }, h("span", { class: "filename", style: "flex:1", text: s.file ? s.file.name : "" }), changePicker(), btn(t("changeClip"), "upload", () => mainEl.querySelector(".change-picker").click(), "btn small"), btn(t("removeClip"), "trash", () => startOver(), "btn small danger")),
+      h("div", { class: "clip-bar" }, h("span", { class: "filename", text: s.file ? s.file.name : "" }), changePicker(), btn(t("changeClip"), "upload", () => mainEl.querySelector(".change-picker").click(), "btn small"), btn(t("removeClip"), "trash", () => startOver(), "btn small danger")),
+      h("div", { class: "preview-studio" }, ...studioKids),
       extra
     );
   }
@@ -479,7 +705,7 @@
     return btn(partPlayer ? t("stopPart") : t("playPart"), partPlayer ? "stop" : "play", () => (partPlayer ? stopPart() : playPart()), "btn small trim-play");
   }
 
-  function playPart() {
+  function playPart(fromTime) {
     stopPart();
     const e = job.edit;
     // the sound the sticker will use: another file if picked, else the clip itself
@@ -496,7 +722,7 @@
       own = true;
     }
     media.playbackRate = e.speed;
-    media.currentTime = e.start;
+    media.currentTime = typeof fromTime === "number" ? fromTime : e.start;
     partPlayer = { media, own, raf: 0, stopAt: e.end };
     const head = mainEl.querySelector(".trim-head");
     const dur = (job.clip && job.clip.duration) || 1;
@@ -778,10 +1004,10 @@
       afterEdit();
     });
 
-    const pack = h("input", { type: "text", maxLength: 60, value: prefs.pack || "", "aria-label": t("pack") });
-    const author = h("input", { type: "text", maxLength: 60, value: prefs.author || "", "aria-label": t("author") });
-    pack.addEventListener("change", () => savePrefs({ pack: pack.value.trim() }));
-    author.addEventListener("change", () => savePrefs({ author: author.value.trim() }));
+    const pack = h("input", { type: "text", maxLength: 60, value: prefs.pack || "whatsapp-audio-stickers-india", "aria-label": t("pack") });
+    const author = h("input", { type: "text", maxLength: 60, value: prefs.author || "whatsapp-audio-stickers-india", "aria-label": t("author") });
+    pack.addEventListener("change", () => savePrefs({ pack: pack.value.trim() || "whatsapp-audio-stickers-india" }));
+    author.addEventListener("change", () => savePrefs({ author: author.value.trim() || "whatsapp-audio-stickers-india" }));
 
     const moving = src && (src.kind === "video" || src.kind === "animated");
     return h(
@@ -792,7 +1018,6 @@
       h("div", { class: "field" }, h("span", { class: "label", text: t("speed") }), chips("speed", J.SPEEDS.map((s) => [s, `${s}x`]))),
       moving ? h("div", { class: "field" }, check("boomerang", t("boomerang"))) : null,
       h("div", { class: "field" }, h("div", { class: "trim" }, h("span", { class: "label", text: t("volume") }), vol, volOut), check("louder", t("louder")), check("fade", t("fade"))),
-      src && src.kind !== "audio" ? h("div", { class: "field" }, h("span", { class: "label", text: t("frame") }), chips("fit", [["cover", t("crop")], ["contain", t("fit")]])) : null,
       h("div", { class: "field" }, h("label", { text: t("caption") }), caption, chips("textPos", [["top", t("top")], ["bottom", t("bottom")]])),
       h("div", { class: "field" }, h("span", { class: "label", text: t("emoji") }), chips("emoji", EMOJIS.map((x) => [x, x]), "emoji")),
       h("div", { class: "field" }, h("details", {}, h("summary", { text: t("packDetails") }), h("div", { class: "field" }, h("label", { text: t("pack") }), pack), h("div", { class: "field" }, h("label", { text: t("author") }), author)))
@@ -869,6 +1094,13 @@
   function refreshBuild() {
     const sec = mainEl && mainEl.querySelector("[data-build]");
     if (sec) sec.replaceWith(buildSection());
+  }
+
+  function focusBuild() {
+    requestAnimationFrame(() => {
+      const sec = mainEl && mainEl.querySelector("[data-build]");
+      if (sec) sec.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
   }
 
   // ---------- start over, change the clip ----------
@@ -1080,6 +1312,7 @@
     const e = job.edit;
     setStatus("", "");
     refreshBuild();
+    focusBuild();
     const progress = (base, span) => (p) => {
       if (dispatch({ type: "progress", run, value: base + p * span })) {
         const bar = mainEl && mainEl.querySelector(".progress > div");
@@ -1135,6 +1368,7 @@
       for (const f of frames) if (!seen.has(f.bitmap)) (seen.add(f.bitmap), f.bitmap.close && f.bitmap.close());
       if (abort && abort.signal === signal) abort = null;
       refreshBuild();
+      if (job.state === "ready") focusBuild();
     }
   }
 

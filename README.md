@@ -22,7 +22,7 @@
 
 **English** · [हिंदी](docs/readme/README.hi.md) · [Português](docs/readme/README.pt-BR.md) · [Español](docs/readme/README.es.md) · [Bahasa Indonesia](docs/readme/README.id.md)
 
-**[Download](#install)** · **[How to use](#how-to-use)** · **[What's new](#whats-new)** · **[FAQ](#faq)** · **[हिंदी](#hindi)** · **[Worklancio](#worklancio)**
+**[Download](#install)** · **[How to use](#how-to-use)** · **[What's new](#whats-new)** · **[Changelog](#changelog)** · **[FAQ](#faq)** · **[हिंदी](#hindi)** · **[Worklancio](#worklancio)**
 
 <br>
 
@@ -66,6 +66,9 @@ with features none of them have:
 
 | | Feature | Why it matters |
 |:-:|---|---|
+| 🆕 | **Visual 1:1 crop and zoom** | Drag the lime square over vertical videos or Reels and zoom 1x to 2.5x to remove black bars. |
+| 🆕 | **Inline cut player** | Play, Pause and Stop directly under the preview, locked to your trimmed cut. |
+| 🆕 | **Budget-friendly optimizer** | Compresses high-res clips toward a crisp 480 KB sweet spot for fast mobile sends. |
 | 🆕 | **Record voice** in the panel | Make a voice sticker in 5 seconds. No file needed. |
 | 🆕 | **Record video** with your webcam | Your own reaction sticker, with sound, straight away. |
 | 🆕 | **Voice sticker animation** | Plain audio becomes a moving sound wave on a lime card, or over your own photo. |
@@ -79,7 +82,32 @@ with features none of them have:
 | 🆕 | **Live size meter** | See exactly how close you are to WhatsApp's 1 MB limits. |
 | 🆕 | **Safety limits built in** | One send at a time, only to the open chat, with a short gap. |
 | ✅ | Auto fit to WhatsApp's limits | Quality, frame rate and size are tuned for you so it always sends. |
-| ✅ | Sticker pack name and author | Shown under the sticker on your friend's phone. |
+| ✅ | Sticker pack name and author | Shown under the sticker on your friend's phone (`whatsapp-audio-stickers-india` by default). |
+
+---
+
+<a id="changelog"></a>
+
+## 📋 Changelog
+
+### v1.4.0 - Inline Video Studio, Visual Crop & Budget Optimizer (27 Nov 2026)
+
+- **Visual 1:1 square crop and pan:** Drag the Electric Lime crop box horizontally and vertically over your video or photo, resize with the corner handle or Zoom slider (`1.0x` to `2.5x`) to remove black bars on Shorts and Reels, or click **Center** and **Fit**.
+- **Inline trimmed player:** Added Play, Pause, and Stop controls directly below the preview, locked to your trimmed cut (`From` to `To`) with live timestamps.
+- **10-second maximum cut:** Caps sticker output at 10 seconds and pre-selects the first 10 seconds on upload so you can slide to the exact moment you want.
+- **Smooth auto-focus:** Automatically scrolls Step 3's progress animation and finished sticker into the center of your screen.
+- **Budget-friendly compression:** Targets a crisp 480 KB sweet spot for faster sends on mobile data and smaller storage, while falling back up to 1 MB when needed.
+- **Default pack identity:** Pre-fills `whatsapp-audio-stickers-india` as the default Pack name and Author.
+
+<details>
+<summary><b>Earlier releases (v1.0.0 to v1.3.0)</b></summary>
+
+- **v1.3.0 (27 Nov 2026):** Drop a file anywhere over the panel, one-tap Change/Remove clip, Make another sticker, and branded making progress screen.
+- **v1.2.0 (26 Nov 2026):** Waveform trim bar with draggable handles, 30-second sliding view window, Play this part, and exact From/To boxes.
+- **v1.1.0 - v1.1.1 (26 Nov 2026):** Smooth GPU-animated panel open/close and draggable lime handle with saved position.
+- **v1.0.0 - v1.0.1 (26 Nov 2026):** Clean-room Manifest V3 release with animated WebP + Ogg Opus, voice/webcam recording, Hindi/English UI, Baloo 2 captions, and My stickers library.
+
+</details>
 
 ---
 
@@ -145,7 +173,7 @@ The same tab closes the panel again, and you can **drag it up or down** to where
 
 Drop a video, GIF, photo or audio file on the box, click to choose one, or paste with **Ctrl + V**.
 
-No clip? Press **Record voice** or **Record video** and make one right now (up to 15 seconds).
+No clip? Press **Record voice** or **Record video** and make one right now (up to 10 seconds).
 
 </td>
 <td width="50%">
@@ -160,7 +188,7 @@ No clip? Press **Record voice** or **Record video** and make one right now (up t
 
 ### 3. Cut and style
 
-- Drag the two lime handles on the **waveform** to keep the best part (up to 15 seconds). You can see where the loud bit is.
+- Drag the two lime handles on the **waveform** to keep the best part (up to 10 seconds). You can see where the loud bit is.
 - Press **Play this part** to hear just that bit, or type exact times in **From** and **To**.
 - Pick a **speed**, turn on **Boomerang**, set the **volume**.
 - **Make it louder** levels quiet clips. **Soft fade** removes clicks.
@@ -351,7 +379,19 @@ Install the free WA Audio Stickers India extension in Chrome, Edge or Brave, ope
 
 ### How do I make a WhatsApp sticker with sound from a video?
 
-Open the WA Audio Stickers India panel in WhatsApp Web, drop your video (MP4, WebM or MOV), drag the two handles on the waveform to pick up to 15 seconds, press Make sticker and send it. The video keeps its own sound.
+Open the WA Audio Stickers India panel in WhatsApp Web, drop your video (MP4, WebM or MOV), drag the two handles on the waveform to pick up to 10 seconds, crop or zoom with the lime square, press Make sticker and send it. The video keeps its own sound.
+
+### How do I crop or zoom a vertical video or Reel?
+
+When Crop mode is selected, drag the lime 1:1 square directly over your video to frame it horizontally and vertically, and drag the corner handle or Zoom slider (1x to 2.5x) to remove black bars. Click Center to reset or Fit to show the whole frame.
+
+### Does the preview play only the trimmed part?
+
+Yes. Pressing Play on the preview or clicking the video plays only your selected cut between From and To, with Play, Pause and Stop controls.
+
+### Are stickers optimized for mobile data?
+
+Yes. The builder optimizes high-resolution clips toward a crisp 480 KB budget-friendly sweet spot by default while keeping everything under WhatsApp's 1 MB limit.
 
 ### How do I make a voice sticker for WhatsApp?
 
@@ -425,7 +465,7 @@ Chrome, Edge and Brave have.
 
 <details>
 <summary><b>How long can a sticker be?</b></summary>
-<br>Up to 15 seconds. Short clips (2 to 6 seconds) look the sharpest, because WhatsApp limits each sticker to about
+<br>Up to 10 seconds. Short clips (2 to 6 seconds) look the sharpest, because WhatsApp limits each sticker to about
 1 MB for the picture and 1 MB for the sound.
 </details>
 

@@ -4,7 +4,7 @@ export const SITE = "https://xaviermsd.github.io/whatsapp-audio-stickers-india/"
 export const REPO = "https://github.com/xaviermsd/whatsapp-audio-stickers-india";
 export const RELEASE = REPO + "/releases/latest";
 export const OG = SITE + "brand/social-preview.png";
-export const VERSION = "1.3.0";
+export const VERSION = "1.4.0";
 export const UPDATED = "2026-11-27";
 
 export const KEYWORDS = [
@@ -20,7 +20,13 @@ export const FAQS = [
   ["How do I send a sticker with sound on WhatsApp?",
     "Install the free WA Audio Stickers India extension in Chrome, Edge or Brave, open web.whatsapp.com, click the lime tab, pick or record a clip, press Make sticker, then Send to this chat. Your friend taps the sticker and hears the sound."],
   ["How do I make a WhatsApp sticker with sound from a video?",
-    "Open the WA Audio Stickers India panel in WhatsApp Web, drop your video (MP4, WebM or MOV), drag the two handles on the waveform to pick up to 15 seconds, press Make sticker and send it. The video keeps its own sound."],
+    "Open the WA Audio Stickers India panel in WhatsApp Web, drop your video (MP4, WebM or MOV), drag the two handles on the waveform to pick up to 10 seconds, crop or zoom with the lime square, press Make sticker and send it. The video keeps its own sound."],
+  ["How do I crop or zoom a vertical video or Reel?",
+    "When Crop mode is selected, drag the lime 1:1 square directly over your video to frame it horizontally and vertically, and drag the corner handle or Zoom slider (1x to 2.5x) to remove black bars. Click Center to reset or Fit to show the whole frame."],
+  ["Does the preview play only the trimmed part?",
+    "Yes. Pressing Play on the preview or clicking the video plays only your selected cut between From and To, with Play, Pause and Stop controls."],
+  ["Are stickers optimized for mobile data?",
+    "Yes. The builder optimizes high-resolution clips toward a crisp 480 KB budget-friendly sweet spot by default while keeping everything under WhatsApp's 1 MB limit."],
   ["How do I make a voice sticker for WhatsApp?",
     "Press Record voice in the panel, speak, then stop. We turn your voice into a sticker with a moving sound wave, or put it over a photo you choose, ready to send."],
   ["How do I pick the funny part of a clip?",
@@ -50,6 +56,6 @@ export const STEPS = [
   ["Load it in your browser", "Open chrome://extensions (or edge:// or brave://), turn on Developer mode and click Load unpacked."],
   ["Open WhatsApp Web", "Go to web.whatsapp.com, open a chat and click the lime tab on the right edge."],
   ["Pick or record a clip", "Drop a video, GIF, photo or audio file, or record your voice or a selfie video."],
-  ["Cut and style", "Drag the handles on the waveform to pick the best part (up to 15 seconds), play it, then set speed, volume and an optional caption."],
+  ["Cut and style", "Drag the handles on the waveform to pick the best part (up to 10 seconds), crop with the lime square, play it, then set speed, volume and an optional caption."],
   ["Make and send", "Press Make sticker, then Send to this chat. It plays with sound when tapped."],
 ];

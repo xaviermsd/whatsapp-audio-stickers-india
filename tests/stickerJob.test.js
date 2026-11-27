@@ -68,11 +68,14 @@ test("editing while ready drops the built sticker", () => {
 });
 
 test("edit values are clamped", () => {
-  const e = J.clampEdit({ start: -3, end: 99, volume: 9, fit: "weird", text: "x".repeat(80), speed: 7, textPos: "?" }, { duration: 12 });
+  const e = J.clampEdit({ start: -3, end: 99, volume: 9, fit: "weird", zoom: 5, text: "x".repeat(80), speed: 7, textPos: "?" }, { duration: 12 });
   assert.equal(e.start, 0);
-  assert.equal(e.end, 12);
+  assert.equal(e.end, J.MAX_SECONDS);
   assert.equal(e.volume, 2);
   assert.equal(e.fit, "cover");
+  assert.equal(e.zoom, 3);
+  assert.equal(J.clampEdit({ zoom: 0.2 }, { duration: 12 }).zoom, 1);
+  assert.equal(J.clampEdit({ zoom: 1.65 }, { duration: 12 }).zoom, 1.65);
   assert.equal(e.text, "x".repeat(40));
   assert.equal(e.speed, 1, "unknown speeds fall back to 1x");
   assert.equal(e.textPos, "bottom");

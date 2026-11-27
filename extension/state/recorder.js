@@ -17,7 +17,7 @@
     done: { ask: "asking" },
     denied: { ask: "asking" },
   });
-  const MAX_SECONDS = 15;
+  const MAX_SECONDS = 10;
 
   function initial() {
     return Object.freeze({ state: STATES.IDLE, kind: null, seconds: 0 });

@@ -53,7 +53,7 @@
     error: { en: "Something went wrong", hi: "कुछ गड़बड़ हो गई" },
   });
 
-  const MAX_SECONDS = 15;
+  const MAX_SECONDS = 10;
   const SPEEDS = Object.freeze([0.5, 0.75, 1, 1.5, 2]);
 
   const DEFAULT_EDIT = Object.freeze({
@@ -65,6 +65,9 @@
     louder: false, // auto level to a strong peak
     fade: false, // soft fade in and out
     fit: "cover", // "cover" crops to a square, "contain" adds empty edges
+    zoom: 1, // 1 to 3x zoom inside the square frame
+    panX: 0, // -0.5 to 0.5 horizontal offset
+    panY: 0, // -0.5 to 0.5 vertical offset
     text: "", // optional caption drawn on the sticker
     textPos: "bottom", // "top" or "bottom"
     emoji: "🔊", // emoji tag WhatsApp shows in sticker search
@@ -169,6 +172,12 @@
     if (end - start > MAX_SECONDS) end = start + MAX_SECONDS;
     const volume = Math.max(0, Math.min(2, Number(edit.volume)));
     const speed = SPEEDS.includes(Number(edit.speed)) ? Number(edit.speed) : 1;
+    const rawZoom = Number(edit.zoom);
+    const zoom = Number.isFinite(rawZoom) ? Math.max(1, Math.min(3, Math.round(rawZoom * 100) / 100)) : 1;
+    const clampPan = (v) => {
+      const n = Number(v);
+      return Number.isFinite(n) ? Math.max(-2, Math.min(2, Math.round(n * 1000) / 1000)) : 0;
+    };
     return {
       start,
       end,
@@ -178,6 +187,9 @@
       louder: Boolean(edit.louder),
       fade: Boolean(edit.fade),
       fit: edit.fit === "contain" ? "contain" : "cover",
+      zoom,
+      panX: clampPan(edit.panX),
+      panY: clampPan(edit.panY),
       text: String(edit.text || "").slice(0, 40),
       textPos: edit.textPos === "top" ? "top" : "bottom",
       emoji: String(edit.emoji || "🔊").slice(0, 8),

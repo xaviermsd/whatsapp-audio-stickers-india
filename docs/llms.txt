@@ -6,7 +6,7 @@
 > tracking. Unofficial; not made by or affiliated with WhatsApp or Meta.
 
 ## Key facts
-- Version 1.3.0, updated 2026-11-27. Price: free.
+- Version 1.4.0, updated 2026-11-27. Price: free.
 - Inputs: MP4, WebM, MOV, GIF, PNG, JPG, MP3, M4A, WAV, OGG; or record voice or webcam in the panel.
 - Features: cut up to 15 seconds, speed 0.5x to 2x, boomerang, volume, auto level, fades, captions in Hindi,
   English or Hinglish, saved sticker library with pack export and import, app in Hindi and English.
@@ -26,7 +26,10 @@
 ## FAQ
 - **What are WhatsApp audio stickers?** WhatsApp audio stickers (also called sound stickers) are animated stickers that play a short sound when you tap them. WA Audio Stickers India lets you make them from any video, GIF, photo or your own voice and send them from WhatsApp Web.
 - **How do I send a sticker with sound on WhatsApp?** Install the free WA Audio Stickers India extension in Chrome, Edge or Brave, open web.whatsapp.com, click the lime tab, pick or record a clip, press Make sticker, then Send to this chat. Your friend taps the sticker and hears the sound.
-- **How do I make a WhatsApp sticker with sound from a video?** Open the WA Audio Stickers India panel in WhatsApp Web, drop your video (MP4, WebM or MOV), drag the two handles on the waveform to pick up to 15 seconds, press Make sticker and send it. The video keeps its own sound.
+- **How do I make a WhatsApp sticker with sound from a video?** Open the WA Audio Stickers India panel in WhatsApp Web, drop your video (MP4, WebM or MOV), drag the two handles on the waveform to pick up to 10 seconds, crop or zoom with the lime square, press Make sticker and send it. The video keeps its own sound.
+- **How do I crop or zoom a vertical video or Reel?** When Crop mode is selected, drag the lime 1:1 square directly over your video to frame it horizontally and vertically, and drag the corner handle or Zoom slider (1x to 2.5x) to remove black bars. Click Center to reset or Fit to show the whole frame.
+- **Does the preview play only the trimmed part?** Yes. Pressing Play on the preview or clicking the video plays only your selected cut between From and To, with Play, Pause and Stop controls.
+- **Are stickers optimized for mobile data?** Yes. The builder optimizes high-resolution clips toward a crisp 480 KB budget-friendly sweet spot by default while keeping everything under WhatsApp's 1 MB limit.
 - **How do I make a voice sticker for WhatsApp?** Press Record voice in the panel, speak, then stop. We turn your voice into a sticker with a moving sound wave, or put it over a photo you choose, ready to send.
 - **How do I pick the funny part of a clip?** Drag the two lime handles on the waveform, or drag the middle to slide the whole part. Press Play this part to hear it first, or type exact times in From and To.
 - **Which files can I turn into a sound sticker?** Videos (MP4, WebM, MOV), GIFs, photos (PNG, JPG, WebP) and audio (MP3, M4A, WAV, OGG). You can also record your voice or a selfie video right in the panel.
