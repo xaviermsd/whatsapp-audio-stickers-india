@@ -26,7 +26,7 @@
 
 <br>
 
-<img src="docs/media/demo.gif" alt="Demo: a clip is dropped into the panel, cut, captioned and sent as a sticker with sound" width="860">
+<img src="docs/media/demo-v14.gif" alt="Demo: a clip is dropped into the panel, cut, captioned and sent as a sticker with sound" width="860">
 
 <br><br>
 
@@ -199,8 +199,8 @@ No clip? Press **Record voice** or **Record video** and make one right now (up t
 </td>
 <td width="50%">
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/02-edit-dark.png">
-  <img src="docs/screenshots/02-edit-light.png" alt="Cut and style" width="380">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/02-edit-dark-v14.png">
+  <img src="docs/screenshots/02-edit-light-v14.png" alt="Cut and style" width="380">
 </picture>
 </td>
 </tr>
@@ -217,8 +217,8 @@ or size by ourselves if needed, so it always fits.
 </td>
 <td width="50%">
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/04-ready-dark.png">
-  <img src="docs/screenshots/04-ready-light.png" alt="Sticker ready with size meter" width="380">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/04-ready-dark-v14.png">
+  <img src="docs/screenshots/04-ready-light-v14.png" alt="Sticker ready with size meter" width="380">
 </picture>
 </td>
 </tr>
@@ -237,8 +237,8 @@ Your friend taps the sticker and hears the sound. 🔊
 </td>
 <td width="50%">
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/05-sent-dark.png">
-  <img src="docs/screenshots/05-sent-light.png" alt="Sticker sent" width="380">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/05-sent-dark-v14.png">
+  <img src="docs/screenshots/05-sent-light-v14.png" alt="Sticker sent" width="380">
 </picture>
 </td>
 </tr>
@@ -249,8 +249,8 @@ Your friend taps the sticker and hears the sound. 🔊
 Stickers arrive like any WhatsApp sound sticker, with the speaker badge on top. Tap to hear it.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/00-chat-dark.png">
-  <img src="docs/screenshots/00-chat-light.png" alt="Sound stickers made with the extension, sent in a chat" width="860">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/00-chat-dark-v14.png">
+  <img src="docs/screenshots/00-chat-light-v14.png" alt="Sound stickers made with the extension, sent in a chat" width="860">
 </picture>
 
 <sub>Screenshots and demo are from our test chat page (made-up names, sending simulated), using short moments
@@ -268,8 +268,8 @@ Save up to 60 stickers. Tap one to hear it, ⭐ to keep it on top, send it again
 delete it. **Export pack** saves them all as one file, and **Import pack** loads a pack a friend sent you.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/06-library-dark.png">
-  <img src="docs/screenshots/06-library-light.png" alt="My stickers library" width="380">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/06-library-dark-v14.png">
+  <img src="docs/screenshots/06-library-light-v14.png" alt="My stickers library" width="380">
 </picture>
 </details>
 
@@ -281,8 +281,8 @@ Tap **हिं** in the top corner and every button, tip and error message swit
 Devanagari, English or a mix of both.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/08-hindi-dark.png">
-  <img src="docs/screenshots/08-hindi-light.png" alt="The panel in Hindi" width="380">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/08-hindi-dark-v14.png">
+  <img src="docs/screenshots/08-hindi-light-v14.png" alt="The panel in Hindi" width="380">
 </picture>
 </details>
 
