@@ -7,7 +7,7 @@
   </picture>
 </a>
 
-### Make WhatsApp stickers that play sound, from any video, GIF, photo or your own voice.
+### A free Chrome extension that makes WhatsApp stickers play sound, from any video, GIF, photo or your own voice.
 ### Free. Private. Runs in your browser. Proudly made in India.
 
 [![Latest release](https://img.shields.io/github/v/release/xaviermsd/whatsapp-audio-stickers-india?style=for-the-badge&color=d6ff36&labelColor=080808&label=Download)](https://github.com/xaviermsd/whatsapp-audio-stickers-india/releases/latest)
